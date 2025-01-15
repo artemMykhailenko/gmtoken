@@ -1,0 +1,406 @@
+/* TwitterConnect.module.css */
+.container {
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+  background: url("/image/bg.png") no-repeat center center;
+  background-size: cover;
+  overflow: hidden;
+}
+
+/* Wave Animation */
+.waveContainer {
+  position: absolute;
+  bottom: -2rem;
+  left: -100%;
+  width: 43.333%;
+  transition: transform 0.3s ease-out;
+  animation: slideInFromLeft 1.5s ease-out forwards;
+}
+
+.waveImage {
+  width: 100%;
+  animation: waveFloat 4s ease-in-out infinite;
+  filter: drop-shadow(0 10px 15px rgba(0, 0, 255, 0.2));
+}
+
+/* Plane Animation */
+.planeContainer {
+  position: absolute;
+  left: -100%;
+  top: 25%;
+  transition: transform 0.2s ease-out;
+  animation: slideInPlane 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.planeImage {
+  animation: planeFly 6s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px rgba(20, 184, 166, 0.3));
+  transform-origin: center center;
+}
+
+/* Cloud Animation */
+.cloudContainer {
+  position: absolute;
+  right: -4rem;
+  bottom: 10rem;
+  transition: transform 0.4s ease-out;
+  animation: slideInFromRight 1.8s ease-out forwards;
+  animation-delay: 0.5s;
+}
+
+.cloudImage {
+  animation: cloudFloat 8s ease-in-out infinite;
+  filter: drop-shadow(0 5px 15px rgba(255, 255, 255, 0.3));
+  transform-origin: center center;
+}
+
+/* Bird Animation */
+.birdContainer {
+  position: absolute;
+  right: -100%;
+  top: 5rem;
+  transition: transform 0.3s ease-out;
+  animation: slideInFromRight 1.2s ease-out forwards;
+  animation-delay: 1s;
+}
+
+.birdImage {
+  animation: birdFly 4s ease-in-out infinite;
+  filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.2));
+}
+
+.buttonContainer {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 506px;
+  height: 203px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: appearAndFloat 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.button {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  animation: pulse 2s infinite;
+}
+
+.button::before {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  background: linear-gradient(
+    45deg,
+    #00fffc,
+    #0099ff,
+    #0040ff,
+    #2bff00,
+    #00fffc
+  );
+  border-radius: 102px;
+  filter: blur(5px);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  animation: borderGlow 3s linear infinite;
+  z-index: -1;
+}
+
+.button:hover::before {
+  opacity: 1;
+}
+
+.button:hover {
+  transform: scale(1.02);
+  animation: wobble 0.5s ease-in-out;
+}
+
+.button:active {
+  transform: scale(0.98);
+}
+
+.buttonBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+.buttonText {
+  position: relative;
+  z-index: 2;
+  color: #ffffff;
+  font-family: "Cherry Bomb One", serif;
+  font-size: 44px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  animation: textGlow 2s infinite;
+}
+
+.buttonDisabled {
+  cursor: not-allowed;
+  opacity: 0.8;
+  animation: none;
+}
+
+.buttonDisabled::before {
+  display: none;
+}
+
+.buttonSpinner {
+  position: absolute;
+  right: 30%;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Existing animations */
+@keyframes spin {
+  to {
+    transform: translateY(-50%) rotate(360deg);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* New animations */
+@keyframes appearAndFloat {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -30%);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -60%);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes borderGlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes textGlow {
+  0%,
+  100% {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  50% {
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5),
+      0 0 12px rgba(0, 153, 255, 0.5);
+  }
+}
+
+@keyframes wobble {
+  0%,
+  100% {
+    transform: scale(1.02) rotate(0deg);
+  }
+  25% {
+    transform: scale(1.02) rotate(-1deg);
+  }
+  75% {
+    transform: scale(1.02) rotate(1deg);
+  }
+}
+
+/* New Keyframe Animations */
+@keyframes slideInFromLeft {
+  0% {
+    left: -100%;
+    opacity: 0;
+  }
+  100% {
+    left: 0;
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromRight {
+  0% {
+    right: -100%;
+    opacity: 0;
+  }
+  100% {
+    right: -2rem;
+    opacity: 1;
+  }
+}
+
+@keyframes slideInPlane {
+  0% {
+    left: -100%;
+    opacity: 0;
+    transform: rotate(-45deg);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    left: 20rem;
+    opacity: 1;
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes popIn {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes ripple {
+  to {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+@keyframes waveFloat {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-5px) rotate(0.5deg);
+  }
+  50% {
+    transform: translateY(-5px) rotate(-1deg);
+  }
+  75% {
+    transform: translateY(-2px) rotate(0deg);
+  }
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+@keyframes planeFly {
+  0% {
+    transform: translate(0, 0) rotate(5deg) scale(1);
+  }
+  25% {
+    transform: translate(15px, -20px) rotate(-2deg) scale(1.05);
+  }
+  50% {
+    transform: translate(30px, 0) rotate(3deg) scale(1);
+  }
+  75% {
+    transform: translate(15px, 20px) rotate(-1deg) scale(0.95);
+  }
+  100% {
+    transform: translate(0, 0) rotate(5deg) scale(1);
+  }
+}
+
+@keyframes cloudFloat {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  25% {
+    transform: translate(-25px, 15px) scale(1.05);
+  }
+  50% {
+    transform: translate(-30px, 0) scale(1);
+  }
+  75% {
+    transform: translate(-25px, -15px) scale(0.98);
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+/* 
+@keyframes birdFly {
+  0% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+  25% {
+    transform: translate(-20px, -15px) scale(1.1) rotate(5deg);
+  }
+  50% {
+    transform: translate(-40px, 0) scale(1) rotate(-5deg);
+  }
+  75% {
+    transform: translate(-20px, 15px) scale(0.9) rotate(5deg);
+  }
+  100% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+} */
+
+@keyframes spin {
+  to {
+    transform: translateY(-50%) rotate(360deg);
+  }
+}
+
+/* @keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.75;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.98);
+  }
+} */
