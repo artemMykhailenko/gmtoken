@@ -442,6 +442,7 @@
   }
   .buttonContainer {
     width: 300px;
+    height: 130px !important;
     top: 45%;
   }
 
@@ -490,6 +491,7 @@
   }
   .buttonContainer {
     width: 300px;
+    height: 130px !important;
     top: 45%;
   }
 
