@@ -1,19 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./SendContract.module.css";
 import ButtonBackground from "../buttons/BlueButton";
 
 interface SendContractProps {
   connectedWallet: { accounts: { address: string }[] } | null;
   sendTransaction: () => Promise<void>;
+  walletAddress: string;
 }
 
 const SendContract: React.FC<SendContractProps> = ({
   connectedWallet,
+  walletAddress,
   sendTransaction,
 }) => {
-  const [wallet, setWallet] = useState("");
+  const [wallet, setWallet] = useState(walletAddress);
   const [username, setUsername] = useState("");
-
+  useEffect(() => {
+    setWallet(walletAddress); // Обновляем адрес кошелька при изменении пропсов
+  }, [walletAddress]);
   return (
     <div className={styles.container}>
       {/* Радуга */}

@@ -22,7 +22,7 @@
     rgba(255, 255, 255, 0.8)
   );
   opacity: 0;
-  animation: backgroundGlow 4s ease-in-out infinite;
+  /* animation: backgroundGlow 4s ease-in-out infinite; */
 }
 .header {
   position: absolute;

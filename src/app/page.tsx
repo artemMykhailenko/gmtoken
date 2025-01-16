@@ -255,6 +255,7 @@ export default function Home() {
                 // </div>
                 <SendContract
                   connectedWallet={connectedWallet}
+                  walletAddress={connectedWallet.accounts[0]?.address || ""}
                   sendTransaction={sendTransaction}
                 />
               )}
