@@ -6,6 +6,7 @@ export const generateCodeVerifier = (): string => {
   
   export const base64UrlEncode = (buffer: ArrayBuffer): string => {
     const bytes = new Uint8Array(buffer);
+    //@ts-ignore
     return btoa(String.fromCharCode(...bytes))
       .replace(/\+/g, "-")
       .replace(/\//g, "_")
