@@ -12,7 +12,7 @@
 /* Радуга */
 .rainbow {
   position: absolute;
-  left: -100%;
+  left: 20px !important;
   bottom: -10px;
   z-index: 2;
   transform-origin: bottom center;
@@ -20,16 +20,22 @@
     rainbowFloat 6s ease-in-out infinite;
   opacity: 0;
 }
+.rainbow img {
+  width: 330px;
+}
 
 /* Шарик */
 .balloon {
   position: absolute;
-  left: 18%;
+  left: 220px;
   bottom: -100%;
   z-index: 2;
   animation: balloonEntry 2.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
     balloonFloat 6s ease-in-out infinite;
   filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.2));
+}
+.balloon img {
+  width: 300px;
 }
 
 .form {
@@ -50,7 +56,7 @@
   margin-left: 10px;
   margin-top: 20px;
   font-family: "Cherry Bomb One", serif;
-  font-size: 30px;
+  /* font-size: 30px; */
   font-weight: bold;
   color: #333;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
@@ -76,13 +82,6 @@
   margin: 12px auto;
   /* perspective: 1500px; */
 }
-/* 
-.inputGroup {
-  position: relative;
-  width: 100%;
-  max-width: 460px;
-  margin: 12px auto;
-} */
 
 .input {
   width: 440px;
@@ -98,7 +97,7 @@
   transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   box-shadow: inset 0 -8px 0 rgba(255, 107, 43, 0.2), 0 0 0 3px #ff8f59,
     0 4px 0 3px #ff6b2b, 0 8px 8px rgba(255, 107, 43, 0.2);
-  animation: inputBounce 3s ease-in-out infinite;
+  /* animation: inputBounce 3s ease-in-out infinite; */
 }
 
 .input:hover {
@@ -111,7 +110,7 @@
 .input:focus {
   transform: translateY(-4px) scale(1.02);
   box-shadow: inset 0 -8px 0 rgba(255, 107, 43, 0.4), 0 0 0 4px #ff8f59,
-    0 8px 0 3px #ff6b2b, 0 12px 24px rgba(255, 107, 43, 0.4),
+    0 8px 0 3px #ff6b2b, 0 8px 10px rgba(255, 107, 43, 0.4),
     0 0 30px rgba(255, 107, 43, 0.4);
   animation: inputPulse 1.5s ease-in-out infinite;
 }
@@ -119,7 +118,7 @@
 .input::placeholder {
   color: rgba(255, 107, 43, 0.5);
   font-weight: 500;
-  font-size: 25px;
+  /* font-size: 25px; */
   letter-spacing: 0.5px;
   transition: all 0.3s ease;
 }
@@ -461,8 +460,108 @@
     opacity: 1;
   }
 }
-@media (max-width: 1440px) {
-  .planeContainer {
-    top: 50%;
+@media (max-width: 1357px) {
+  .rainbow {
+    left: -80px !important;
+  }
+  .balloon {
+    left: 70px;
+  }
+}
+@media (max-width: 1066px) {
+  .rainbow {
+    left: -80px !important;
+  }
+  .balloon {
+    left: 40px;
+  }
+  .rainbow img {
+    width: 250px !important;
+    height: 100vw;
+  }
+  .balloon img {
+    width: 250px !important;
+  }
+
+  .inputGroup {
+    position: relative;
+    width: 400px;
+  }
+  .input {
+    width: 400px !important;
+  }
+  .label {
+    margin-left: 40px;
+    margin-top: 10px;
+    font-size: 30px;
+  }
+}
+@media (max-width: 900px) {
+  .rainbow {
+    bottom: 0px;
+    left: -80px !important;
+  }
+  .balloon {
+    left: 0px;
+  }
+  .rainbow img {
+    width: 200px !important;
+    height: 100vh;
+  }
+  .balloon img {
+    width: 220px !important;
+  }
+}
+@media (max-width: 720px) {
+  .rainbow {
+    left: -110px !important;
+  }
+  .balloon {
+    bottom: 0 !important;
+    left: -10px;
+  }
+  .form {
+    gap: 5px;
+    margin-top: 40px;
+  }
+  .container {
+    align-items: flex-start;
+  }
+  .label {
+    font-size: 22px;
+  }
+}
+@media (max-width: 530px) {
+  .buttonContainer {
+    margin-left: 0;
+    align-self: center;
+    width: 250px;
+    height: 95px;
+  }
+  .inputGroup {
+    position: relative;
+    width: 340px;
+  }
+  .input {
+    height: 60px;
+    font-size: 20px;
+    width: 340px !important;
+  }
+}
+@media (max-width: 530px) {
+  .buttonContainer {
+    margin-left: 0;
+    align-self: center;
+    width: 230px;
+    height: 85px;
+  }
+  .inputGroup {
+    position: relative;
+    width: 310px;
+    padding: 0 !important;
+  }
+  .input {
+    height: 50px;
+    width: 310px !important;
   }
 }

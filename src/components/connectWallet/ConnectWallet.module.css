@@ -33,8 +33,8 @@
 
 .airship {
   position: absolute;
-  top: 40px;
-  right: 160px;
+  top: 30px;
+  right: 50px;
   z-index: 10;
   animation: airshipFlyIn 5s cubic-bezier(0.25, 1, 0.5, 1) forwards,
     airshipFly 8s ease-in-out infinite 5s,
@@ -42,7 +42,9 @@
   transform-origin: center;
   filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.1));
 }
-
+.airship img {
+  width: 400px;
+}
 .body {
   display: flex;
   flex-direction: column;
@@ -51,14 +53,14 @@
   gap: 12px;
   z-index: 2;
   animation: fadeIn 0.8s ease-out;
-  margin-top: -130px;
+  margin-top: -80px;
   /* perspective: 1000px; */
 }
 .buttonContainer {
   position: relative;
   /* transform: translate(-50%, -50%); */
-  width: 370px;
-  height: 145px;
+  width: 340px;
+  height: 125px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -81,7 +83,7 @@
   z-index: 2;
   color: #ffffff;
   font-family: "Cherry Bomb One", serif;
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -158,7 +160,7 @@
   position: absolute;
   left: 25%;
   transform: translateX(-50%);
-  bottom: -200px;
+  bottom: 0px !important;
   opacity: 0;
   filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.1));
   animation: rainbowRise 1.5s ease-out forwards;
@@ -166,6 +168,7 @@
 }
 
 .rainbow img {
+  width: 400px;
   animation: rainbowPulse 3s ease-in-out infinite;
   animation-delay: 4.5s; /* Starts pulsing after rising */
 }
@@ -179,6 +182,9 @@
   animation: cloudEntrance1 2s ease-out forwards,
     floatCloud1 30s linear infinite 2s, cloudBob 5s ease-in-out infinite 2s;
 }
+.cloud1 img {
+  width: 820px;
+}
 
 .cloud2 {
   position: absolute;
@@ -189,11 +195,14 @@
   animation: cloudEntrance2 2s ease-out forwards 0.5s,
     floatCloud2 35s linear infinite 2.5s, cloudBob 5s ease-in-out infinite 2.5s;
 }
+.cloud2 img {
+  width: 600px;
+}
 /* Веревка */
 .rope {
   position: absolute;
-  top: 140px; /* Настрой положение относительно дирижабля */
-  right: 400px; /* Настрой положение относительно дирижабля */
+  top: 100px; /* Настрой положение относительно дирижабля */
+  right: 200px; /* Настрой положение относительно дирижабля */
   /* z-index: 5; */
   stroke: #7e2d09; /* Цвет верёвки */
   stroke-width: 5; /* Толщина линии */
@@ -570,7 +579,7 @@
   .rainbow {
     position: absolute;
     left: 25%;
-    bottom: -150px;
+    /* bottom: -150px; */
   }
 
   .rainbow img {
@@ -595,10 +604,10 @@
 @media (max-width: 1280px) {
   .airship {
     top: 20px;
-    right: -30px !important;
+    right: 30px !important;
   }
   .airship img {
-    width: 500px;
+    width: 400px;
   }
   .rope {
     right: 180px;
@@ -610,7 +619,7 @@
   }
 
   .rainbow img {
-    width: 450px;
+    width: 350px;
   }
 
   .cloud1 {
@@ -619,17 +628,19 @@
     bottom: -20px;
   }
   .cloud1 img {
-    width: 900px;
+    width: 670px;
   }
-
+  .cloud2 img {
+    width: 500px;
+  }
   .cloud2 {
     position: absolute;
     right: -100%;
     bottom: -20px;
   }
   .buttonContainer {
-    width: 350px;
-    height: 145px;
+    width: 320px;
+    height: 135px;
   }
 
   .buttonText {
@@ -645,7 +656,7 @@
     right: -20px !important;
   }
   .airship img {
-    width: 400px;
+    width: 300px;
   }
   .rope {
     top: 70px;
@@ -659,7 +670,7 @@
   }
 
   .rainbow img {
-    width: 400px;
+    width: 300px;
   }
 
   .cloud1 {
@@ -668,7 +679,7 @@
     bottom: -20px;
   }
   .cloud1 img {
-    width: 600px;
+    width: 500px;
   }
 
   .cloud2 {
@@ -677,15 +688,15 @@
     bottom: -20px;
   }
   .cloud2 img {
-    width: 500px;
+    width: 400px;
   }
   .buttonContainer {
-    width: 330px;
-    height: 130px;
+    width: 310px;
+    height: 110px;
   }
 
   .buttonText {
-    font-size: 30px;
+    font-size: 25px;
   }
   .body {
     gap: 0px;
@@ -693,11 +704,11 @@
 }
 @media (max-width: 750px) {
   .airship {
-    top: 20px;
-    right: -20px !important;
+    top: 40px;
+    right: 0px !important;
   }
   .airship img {
-    width: 350px;
+    width: 300px;
   }
   .rope {
     top: 80px;
@@ -711,7 +722,7 @@
   }
 
   .rainbow img {
-    width: 400px;
+    width: 300px;
   }
 
   .cloud1 {
@@ -720,7 +731,7 @@
     bottom: -20px;
   }
   .cloud1 img {
-    width: 600px;
+    width: 500px;
   }
 
   .cloud2 {
@@ -729,7 +740,7 @@
     bottom: -20px;
   }
   .cloud2 img {
-    width: 500px;
+    width: 400px;
   }
   .buttonContainer {
     width: 300px;
