@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
+  height: 100vh;
   background: url("/image/bg.png") no-repeat center center;
   background-size: cover;
   position: relative;
@@ -60,6 +60,7 @@
   font-weight: bold;
   color: #333;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  -webkit-text-stroke: 0.5px white;
   animation: labelBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
   opacity: 0;
   transform: translateY(20px);
