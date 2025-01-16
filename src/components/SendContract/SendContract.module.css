@@ -461,3 +461,8 @@
     opacity: 1;
   }
 }
+@media (max-width: 1440px) {
+  .planeContainer {
+    top: 50%;
+  }
+}

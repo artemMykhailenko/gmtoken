@@ -1,0 +1,239 @@
+/* 🔥 Контейнер лоадера */
+.loaderContainer {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: url("/image/bg.png") no-repeat center center;
+  background-size: cover;
+  overflow: hidden;
+  backdrop-filter: blur(6px);
+  z-index: 1000;
+}
+
+/* ☀️ Центральное свечение */
+.coreGlow {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.6) 0%,
+    transparent 80%
+  );
+  border-radius: 50%;
+  animation: pulseGlow 3s infinite ease-in-out;
+}
+
+/* ☀️ Солнце */
+.sunWrapper {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  z-index: 1000000;
+}
+
+.sunImage {
+  position: absolute;
+  width: 100%;
+  height: auto;
+  z-index: 1000000;
+  animation: sunBounce 3s infinite ease-in-out;
+}
+
+/* ☀️ Вспышки на солнце */
+.sunFlare {
+  position: absolute;
+  inset: -15px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 200, 0, 0.6) 0%,
+    transparent 70%
+  );
+  animation: flarePulse 2s infinite ease-in-out;
+}
+
+/* 🌟 Свечение вокруг солнца */
+.sunGlow {
+  position: absolute;
+  z-index: 10;
+  inset: -25px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 200, 0, 0.953) 0%,
+    transparent 80%
+  );
+  animation: glowEffect 3s infinite ease-in-out;
+}
+
+/* 🌞 Вращающиеся лучи солнца */
+.sunRays {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  animation: rotateSun 6s linear infinite;
+}
+
+/* .sunRay {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 6px;
+  height: 50px;
+  background: linear-gradient(to top, rgba(255, 215, 0, 0.6), transparent);
+  transform-origin: bottom center;
+  animation: rayPulse 2s infinite alternate ease-in-out;
+} */
+
+/* 🪐 Орбитальные частицы */
+.orbit {
+  position: absolute;
+  width: 190px;
+  height: 190px;
+  animation: rotateOrbit 8s linear infinite;
+}
+
+.orbitParticle {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: #ffd700;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(255, 200, 0, 0.8);
+  animation: flicker 1.5s infinite alternate ease-in-out;
+}
+
+/* 🔵 Орбитальный круг */
+.orbitRing {
+  position: absolute;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 200, 0, 0.5);
+  animation: rotateOrbit 8s linear infinite;
+}
+
+/* --- 🔥 Анимации --- */
+@keyframes sunBounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes flarePulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+@keyframes glowEffect {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes rotateSun {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes rayPulse {
+  0%,
+  100% {
+    transform-origin: bottom center;
+    height: 50px;
+    opacity: 0.6;
+  }
+  50% {
+    transform-origin: bottom center;
+    height: 60px;
+    opacity: 0.8;
+  }
+}
+
+@keyframes rotateOrbit {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes flicker {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes pulseGlow {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 0.8;
+  }
+}
+
+/* 📱 Адаптивный дизайн */
+@media (max-width: 768px) {
+  .loaderContainer {
+    backdrop-filter: blur(3px);
+  }
+
+  .sunWrapper {
+    width: 100px;
+    height: 100px;
+  }
+
+  .orbitRing {
+    width: 120px;
+    height: 120px;
+  }
+
+  .orbit {
+    width: 90px;
+    height: 90px;
+  }
+
+  .sunRays {
+    width: 130px;
+    height: 130px;
+  }
+
+  .orbitParticle {
+    width: 7px;
+    height: 7px;
+  }
+}

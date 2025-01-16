@@ -72,7 +72,7 @@ const TwitterConnect: React.FC<TwitterConnectProps> = ({
       >
         <img src={bird.src} alt="" className={styles.birdImage} />
       </div>
-
+      <span className={styles.title}>CONNECT YOUR TWITTER</span>
       {/* Connect Button with enhanced effects */}
       <div className={styles.buttonContainer}>
         <button

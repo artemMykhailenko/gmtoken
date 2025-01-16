@@ -4,6 +4,10 @@
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  background: url("/image/bg.png") no-repeat center center;
+  background-size: cover;
+  position: relative;
+  overflow: hidden;
 }
 
 .title {

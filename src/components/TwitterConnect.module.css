@@ -6,6 +6,10 @@
   background: url("/image/bg.png") no-repeat center center;
   background-size: cover;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* justify-content: center; */
 }
 
 /* Wave Animation */
@@ -69,7 +73,14 @@
   animation: birdFly 4s ease-in-out infinite;
   filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.2));
 }
-
+.title {
+  position: relative;
+  /* left: 50%; */
+  top: 20%;
+  font-size: 40px;
+  /* transform: translate(-50%, -50%); */
+  animation: slideInFromLeft 1.5s ease-out forwards;
+}
 .buttonContainer {
   position: absolute;
   top: 40%;
@@ -78,6 +89,7 @@
   width: 506px;
   height: 203px;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   animation: appearAndFloat 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
@@ -397,6 +409,10 @@
   .container {
     /* background-size: contain; */
   }
+  .title {
+    top: 26%;
+    font-size: 35px;
+  }
   .waveContainer {
     bottom: -15px;
     left: -100%;
@@ -445,25 +461,28 @@
   .waveContainer {
     bottom: -15px;
     left: -100%;
-    width: 60.333%;
+    width: 56.333%;
   }
   .planeContainer {
     position: absolute;
     left: 100px !important;
-    top: 48%;
+    top: 45%;
     transition: transform 0.2s ease-out;
     animation: slideInPlane 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
   }
   .planeImage {
-    width: 280px;
+    width: 240px;
   }
   .cloudContainer {
     right: -5rem;
     bottom: 15rem;
   }
-
+  .title {
+    top: 32%;
+    font-size: 30px;
+  }
   .cloudImage {
-    width: 550px;
+    width: 500px;
   }
   .buttonContainer {
     width: 300px;
@@ -553,9 +572,12 @@
   .cloudContainer {
     right: -5rem;
     bottom: 0;
-    top: 6rem;
+    top: 3rem;
   }
-
+  .title {
+    top: 28%;
+    font-size: 26px;
+  }
   .cloudImage {
     width: 320px;
   }

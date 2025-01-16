@@ -15,6 +15,7 @@ import {
 } from "@/src/config";
 import ConnectWallet from "../components/connectWallet/ConnectWallet";
 import SendContract from "../components/SendContract/SendContract";
+import SunLoader from "../components/loader/loader";
 
 export default function Home() {
   // const [isAuthorized, setIsAuthorized] = useState(false);
@@ -220,7 +221,7 @@ export default function Home() {
         <div>
           {isTwitterLoading ? (
             <div className="flex items-center justify-center min-h-screen">
-              <p>Loading...</p>
+              <SunLoader />
             </div>
           ) : (
             <>
