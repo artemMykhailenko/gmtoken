@@ -55,8 +55,8 @@ const ButtonYellow = () => (
         y2="226.571"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="white" />
-        <stop offset="1" stop-color="#B3B3B3" />
+        <stop stopColor="white" />
+        <stop offset="1" stopColor="#B3B3B3" />
       </linearGradient>
       <linearGradient
         id="paint1_linear_0_11189"
@@ -66,8 +66,8 @@ const ButtonYellow = () => (
         y2="144.395"
         gradientUnits="userSpaceOnUse"
       >
-        <stop offset="0.33" stop-color="#FFBB00" />
-        <stop offset="1" stop-color="#FFBB00" />
+        <stop offset="0.33" stopColor="#FFBB00" />
+        <stop offset="1" stopColor="#FFBB00" />
       </linearGradient>
       <linearGradient
         id="paint2_linear_0_11189"
@@ -77,12 +77,12 @@ const ButtonYellow = () => (
         y2="190.531"
         gradientUnits="userSpaceOnUse"
       >
-        <stop offset="0.18" stop-color="#FFBB00" />
-        <stop offset="0.31" stop-color="#F7981D" />
-        <stop offset="0.52" stop-color="#F7981D" />
-        <stop offset="0.71" stop-color="#F7981D" />
-        <stop offset="0.87" stop-color="#FFA04A" />
-        <stop offset="1" stop-color="#F7981D" />
+        <stop offset="0.18" stopColor="#FFBB00" />
+        <stop offset="0.31" stopColor="#F7981D" />
+        <stop offset="0.52" stopColor="#F7981D" />
+        <stop offset="0.71" stopColor="#F7981D" />
+        <stop offset="0.87" stopColor="#FFA04A" />
+        <stop offset="1" stopColor="#F7981D" />
       </linearGradient>
     </defs>
   </svg>

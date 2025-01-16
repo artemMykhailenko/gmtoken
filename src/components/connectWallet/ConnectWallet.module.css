@@ -33,7 +33,7 @@
 
 .airship {
   position: absolute;
-  top: 50px;
+  top: 40px;
   right: 160px;
   z-index: 10;
   animation: airshipFlyIn 5s cubic-bezier(0.25, 1, 0.5, 1) forwards,
@@ -47,10 +47,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+
   gap: 12px;
   z-index: 2;
   animation: fadeIn 0.8s ease-out;
-  /* margin-top: -80px; */
+  margin-top: -130px;
   /* perspective: 1000px; */
 }
 .buttonContainer {
@@ -86,6 +87,7 @@
   letter-spacing: 1px;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   animation: textGlow 2s infinite;
+  -webkit-text-stroke: 0.5px black;
 }
 .createButton::before {
   content: "";
@@ -190,7 +192,7 @@
 /* Веревка */
 .rope {
   position: absolute;
-  top: 160px; /* Настрой положение относительно дирижабля */
+  top: 140px; /* Настрой положение относительно дирижабля */
   right: 400px; /* Настрой положение относительно дирижабля */
   /* z-index: 5; */
   stroke: #7e2d09; /* Цвет верёвки */
@@ -385,58 +387,63 @@
   width: 100%;
   max-width: 460px;
   margin: 12px auto;
-  perspective: 1000px;
+  perspective: 1200px;
 }
 
 .input {
   width: 100%;
-  height: 62px;
+  height: 72px;
   padding: 0 45px 0 25px;
-  background: #ffffff;
+  background: linear-gradient(135deg, #ffffff 0%, #fff5e6 100%);
   border: none;
   font-family: "Cherry Bomb One", serif;
-  border-radius: 30px;
-  font-size: 18px;
+  border-radius: 40px;
+  font-size: 20px;
   color: #333;
   outline: none;
   box-shadow: 
-      /* Внутреннее свечение */ inset 0 0 20px
-      rgba(255, 184, 0, 0.2),
-    /* Мультяшная обводка */ 0 0 0 3px #ffb800,
-    /* Внешнее свечение */ 0 0 25px rgba(255, 184, 0, 0.3),
+      /* Внутреннее свечение */ inset 0 0 25px
+      rgba(255, 184, 0, 0.25),
+    /* Основная обводка */ 0 0 0 3px #ffb800,
+    /* Внешнее свечение */ 0 0 30px rgba(255, 184, 0, 0.35),
     /* Объемная тень снизу */ 0 8px 0 #ffa500,
-    /* Дополнительная тень для объема */ 0 10px 20px rgba(255, 184, 0, 0.2);
-  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    /* Дополнительная тень */ 0 12px 25px rgba(255, 184, 0, 0.25);
+  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   transform-style: preserve-3d;
-  transform: translateY(0) rotateX(0);
+  transform: translateY(0) rotateX(0) scale(1);
+  will-change: transform, box-shadow;
 }
 
 .input::placeholder {
-  color: rgba(0, 0, 0, 0.35);
-  font-weight: 500;
-  letter-spacing: 0.5px;
+  color: rgba(0, 0, 0, 0.4);
+  font-weight: 600;
+  letter-spacing: 1px;
+  -webkit-text-stroke: 0.7px rgba(0, 0, 0, 0.3);
   text-transform: uppercase;
-  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  background: linear-gradient(45deg, #ff8a00, #ffd700);
+  -webkit-background-clip: text;
+  background-clip: text;
 }
 
 .input:hover {
-  transform: translateY(-4px) rotateX(5deg);
-  box-shadow: inset 0 0 25px rgba(255, 184, 0, 0.25), 0 0 0 3px #ffb800,
-    0 0 30px rgba(255, 184, 0, 0.35), 0 12px 0 #ffa500,
-    0 15px 25px rgba(255, 184, 0, 0.3);
+  transform: translateY(-6px) rotateX(8deg) scale(1.02);
+  box-shadow: inset 0 0 30px rgba(255, 184, 0, 0.3), 0 0 0 4px #ffb800,
+    0 0 35px rgba(255, 184, 0, 0.4), 0 14px 0 #ffa500,
+    0 18px 30px rgba(255, 184, 0, 0.35);
 }
 
 .input:focus {
-  transform: translateY(-4px) rotateX(-5deg) scale(1.02);
-  box-shadow: inset 0 0 30px rgba(255, 184, 0, 0.3), 0 0 0 3px #ffa500,
-    0 0 40px rgba(255, 184, 0, 0.4), 0 12px 0 #ff9500,
-    0 20px 30px rgba(255, 184, 0, 0.35);
+  transform: translateY(-8px) rotateX(-8deg) scale(1.03);
+  box-shadow: inset 0 0 35px rgba(255, 184, 0, 0.35), 0 0 0 4px #ffa500,
+    0 0 45px rgba(255, 184, 0, 0.45), 0 16px 0 #ff9500,
+    0 24px 35px rgba(255, 184, 0, 0.4);
 }
 
 .input:focus::placeholder {
-  opacity: 0.7;
-  transform: translateX(10px) translateY(-5px);
-  font-size: 16px;
+  opacity: 0.6;
+  transform: translateX(15px) translateY(-8px) scale(0.9);
+  letter-spacing: 2px;
 }
 
 .clear {
@@ -444,113 +451,355 @@
   right: 20px;
   top: 40%;
   transform: translateY(-50%) rotate(0deg);
-  width: 30px;
-  height: 30px;
+  width: 35px;
+  height: 35px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #ff9138;
-  font-size: 32px;
+  font-size: 35px;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   background: none;
   border: none;
   padding: 0;
-  opacity: 0.8;
-  text-shadow: 2px 2px 0 #ffb800, 0 0 15px rgba(255, 145, 56, 0.4);
+  opacity: 0.85;
+  text-shadow: 3px 3px 0 #ffb800, 0 0 20px rgba(255, 145, 56, 0.5);
 }
 
 .clear:hover {
   opacity: 1;
-  transform: translateY(-2%) rotate(180deg) scale(1.2);
+  transform: translateY(-2%) rotate(270deg) scale(1.3);
   color: #ff7b00;
-  text-shadow: 3px 3px 0 #ffb800, 0 0 20px rgba(255, 145, 56, 0.6);
+  text-shadow: 4px 4px 0 #ffb800, 0 0 25px rgba(255, 145, 56, 0.7);
 }
 
 @keyframes cartoonPulse {
-  0% {
-    box-shadow: inset 0 0 30px rgba(255, 184, 0, 0.3), 0 0 0 3px #ffa500,
-      0 0 40px rgba(255, 184, 0, 0.4), 0 12px 0 #ff9500,
-      0 20px 30px rgba(255, 184, 0, 0.35);
-    transform: translateY(-4px) scale(1);
+  0%,
+  100% {
+    box-shadow: inset 0 0 35px rgba(255, 184, 0, 0.35), 0 0 0 4px #ffa500,
+      0 0 45px rgba(255, 184, 0, 0.45), 0 16px 0 #ff9500,
+      0 24px 35px rgba(255, 184, 0, 0.4);
+    transform: translateY(-8px) scale(1.03);
   }
   50% {
-    box-shadow: inset 0 0 40px rgba(255, 184, 0, 0.4), 0 0 0 4px #ffa500,
-      0 0 50px rgba(255, 184, 0, 0.5), 0 14px 0 #ff9500,
-      0 25px 35px rgba(255, 184, 0, 0.4);
-    transform: translateY(-6px) scale(1.03);
-  }
-  100% {
-    box-shadow: inset 0 0 30px rgba(255, 184, 0, 0.3), 0 0 0 3px #ffa500,
-      0 0 40px rgba(255, 184, 0, 0.4), 0 12px 0 #ff9500,
-      0 20px 30px rgba(255, 184, 0, 0.35);
-    transform: translateY(-4px) scale(1);
+    box-shadow: inset 0 0 45px rgba(255, 184, 0, 0.45), 0 0 0 5px #ffa500,
+      0 0 55px rgba(255, 184, 0, 0.55), 0 18px 0 #ff9500,
+      0 28px 40px rgba(255, 184, 0, 0.5);
+    transform: translateY(-10px) scale(1.05);
   }
 }
 
 .input:focus {
-  animation: cartoonPulse 2s ease-in-out infinite;
+  animation: cartoonPulse 2.5s ease-in-out infinite;
 }
 
-.inputGroup::before {
-  content: "✨";
-  position: absolute;
-  font-size: 24px;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  opacity: 0;
-  transition: all 0.4s ease;
-  pointer-events: none;
-}
-
+.inputGroup::before,
 .inputGroup::after {
   content: "✨";
   position: absolute;
-  font-size: 24px;
-  right: 10px;
+  font-size: 28px;
   top: 50%;
-  transform: translateY(-50%);
+  transform: translateY(-50%) scale(0);
   opacity: 0;
-  transition: all 0.4s ease;
+  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  filter: drop-shadow(0 0 10px rgba(255, 184, 0, 0.6));
   pointer-events: none;
+}
+
+.inputGroup::before {
+  left: 10px;
+}
+
+.inputGroup::after {
+  right: 10px;
 }
 
 .input:focus ~ .inputGroup::before {
   opacity: 1;
-  left: -30px;
-  animation: twinkle 1s ease-in-out infinite alternate;
+  left: -40px;
+  transform: translateY(-50%) scale(1);
+  animation: twinkle 1.2s ease-in-out infinite alternate;
 }
 
 .input:focus ~ .inputGroup::after {
   opacity: 1;
-  right: -30px;
-  animation: twinkle 1s ease-in-out infinite alternate-reverse;
+  right: -40px;
+  transform: translateY(-50%) scale(1);
+  animation: twinkle 1.2s ease-in-out infinite alternate-reverse;
 }
 
 @keyframes twinkle {
   0% {
-    opacity: 0.3;
-    transform: translateY(-50%) scale(0.8);
+    opacity: 0.4;
+    transform: translateY(-50%) scale(0.8) rotate(-15deg);
+    filter: drop-shadow(0 0 8px rgba(255, 184, 0, 0.5));
   }
   100% {
     opacity: 1;
-    transform: translateY(-50%) scale(1.2);
+    transform: translateY(-50%) scale(1.3) rotate(15deg);
+    filter: drop-shadow(0 0 15px rgba(255, 184, 0, 0.8));
   }
 }
 
 @keyframes float {
-  0% {
-    transform: translateY(0px);
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
   }
   50% {
-    transform: translateY(-10px);
-  }
-  100% {
-    transform: translateY(0px);
+    transform: translateY(-12px) rotate(3deg);
   }
 }
 
 .inputGroup:hover .input::placeholder {
-  animation: float 2s ease-in-out infinite;
+  animation: float 2.5s ease-in-out infinite;
+}
+
+@media (max-width: 1440px) {
+  .airship {
+    top: 20px;
+    right: 30px;
+  }
+  .airship img {
+    width: 500px;
+  }
+  .rope {
+    right: 180px;
+  }
+  .rainbow {
+    position: absolute;
+    left: 25%;
+    bottom: -150px;
+  }
+
+  .rainbow img {
+    width: 450px;
+  }
+
+  .cloud1 {
+    position: absolute;
+    left: -100%;
+    bottom: -20px;
+  }
+  .cloud1 img {
+    width: 980px;
+  }
+
+  .cloud2 {
+    position: absolute;
+    right: -100%;
+    bottom: -20px;
+  }
+}
+@media (max-width: 1280px) {
+  .airship {
+    top: 20px;
+    right: -30px !important;
+  }
+  .airship img {
+    width: 500px;
+  }
+  .rope {
+    right: 180px;
+  }
+  .rainbow {
+    position: absolute;
+    left: 25%;
+    bottom: -10px !important;
+  }
+
+  .rainbow img {
+    width: 450px;
+  }
+
+  .cloud1 {
+    position: absolute;
+    left: -100%;
+    bottom: -20px;
+  }
+  .cloud1 img {
+    width: 900px;
+  }
+
+  .cloud2 {
+    position: absolute;
+    right: -100%;
+    bottom: -20px;
+  }
+  .buttonContainer {
+    width: 350px;
+    height: 145px;
+  }
+
+  .buttonText {
+    font-size: 30px;
+  }
+  .body {
+    gap: 0px;
+  }
+}
+@media (max-width: 960px) {
+  .airship {
+    top: 20px;
+    right: -20px !important;
+  }
+  .airship img {
+    width: 400px;
+  }
+  .rope {
+    top: 70px;
+    width: 400px;
+    right: 100px;
+  }
+  .rainbow {
+    position: absolute;
+    left: 25%;
+    bottom: -50px !important;
+  }
+
+  .rainbow img {
+    width: 400px;
+  }
+
+  .cloud1 {
+    position: absolute;
+    left: -100%;
+    bottom: -20px;
+  }
+  .cloud1 img {
+    width: 600px;
+  }
+
+  .cloud2 {
+    position: absolute;
+    right: -100%;
+    bottom: -20px;
+  }
+  .cloud2 img {
+    width: 500px;
+  }
+  .buttonContainer {
+    width: 330px;
+    height: 130px;
+  }
+
+  .buttonText {
+    font-size: 30px;
+  }
+  .body {
+    gap: 0px;
+  }
+}
+@media (max-width: 750px) {
+  .airship {
+    top: 20px;
+    right: -20px !important;
+  }
+  .airship img {
+    width: 350px;
+  }
+  .rope {
+    top: 80px;
+    width: 300px;
+    right: 100px;
+  }
+  .rainbow {
+    position: absolute;
+    left: 25%;
+    bottom: -50px !important;
+  }
+
+  .rainbow img {
+    width: 400px;
+  }
+
+  .cloud1 {
+    position: absolute;
+    left: -100%;
+    bottom: -20px;
+  }
+  .cloud1 img {
+    width: 600px;
+  }
+
+  .cloud2 {
+    position: absolute;
+    right: -100%;
+    bottom: -20px;
+  }
+  .cloud2 img {
+    width: 500px;
+  }
+  .buttonContainer {
+    width: 300px;
+    height: 110px;
+  }
+
+  .buttonText {
+    font-size: 24px;
+  }
+  .body {
+    gap: 0px;
+  }
+}
+@media (max-width: 600px) {
+  .airship {
+    display: none;
+  }
+  .rope {
+    display: none;
+  }
+  .body {
+    margin-bottom: 170px;
+  }
+  .cloud1 img {
+    width: 400px;
+  }
+  .cloud2 img {
+    width: 400px;
+  }
+  .rainbow {
+    position: absolute;
+    left: 30%;
+    bottom: -70px !important;
+  }
+
+  .rainbow img {
+    width: 380px;
+  }
+}
+@media (max-width: 440px) {
+  .airship {
+    display: none;
+  }
+  .rope {
+    display: none;
+  }
+  .body {
+    margin-bottom: 120px;
+  }
+  .cloud1 img {
+    width: 400px;
+  }
+  .cloud2 img {
+    width: 300px;
+  }
+  .rainbow {
+    position: absolute;
+    left: 40%;
+    bottom: -50px !important;
+  }
+
+  .rainbow img {
+    width: 300px;
+  }
+  .buttonContainer {
+    width: 280px;
+    height: 100px;
+  }
+
+  .buttonText {
+    font-size: 20px;
+  }
 }

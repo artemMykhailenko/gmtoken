@@ -1,21 +1,18 @@
 // ConnectWallet.tsx
-import React, { useState } from "react";
+import React from "react";
 import styles from "./ConnectWallet.module.css";
 import ButtonBackground from "../buttons/BlueButton";
 import ButtonYellow from "../buttons/YellowButton";
 
 interface AuthComponentProps {
   onConnect?: () => void;
+  createAmbireWallet?: () => void;
 }
 
-const ConnectWallet: React.FC<AuthComponentProps> = ({ onConnect }) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const clearInput = (setter: React.Dispatch<React.SetStateAction<string>>) => {
-    setter("");
-  };
-
+const ConnectWallet: React.FC<AuthComponentProps> = ({
+  onConnect,
+  createAmbireWallet,
+}) => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -43,47 +40,15 @@ const ConnectWallet: React.FC<AuthComponentProps> = ({ onConnect }) => {
             <span className={styles.buttonText}>CONNECT WALLET</span>
           </button>
         </div>
+        <span className={styles.withText}>OR</span>
         <div className={styles.buttonContainer}>
           <button
             className={`${styles.createButton} ${styles.buttonAnimation}`}
+            onClick={createAmbireWallet}
           >
             <ButtonBackground />
             <span className={styles.buttonText}>CREATE WALLET</span>
           </button>
-        </div>
-        <span className={styles.withText}>WITH</span>
-
-        <div className={styles.inputGroup}>
-          <input
-            type="email"
-            placeholder="E-MAIL"
-            className={styles.input}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          {email && (
-            <span className={styles.clear} onClick={() => clearInput(setEmail)}>
-              ×
-            </span>
-          )}
-        </div>
-
-        <div className={styles.inputGroup}>
-          <input
-            type="password"
-            placeholder="PASSWORD"
-            className={styles.input}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          {password && (
-            <span
-              className={styles.clear}
-              onClick={() => clearInput(setPassword)}
-            >
-              ×
-            </span>
-          )}
         </div>
       </div>
 

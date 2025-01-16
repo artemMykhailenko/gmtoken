@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -13,15 +14,17 @@ import {
   TWITTER_CLIENT_ID,
 } from "@/src/config";
 import ConnectWallet from "../components/connectWallet/ConnectWallet";
+import SendContract from "../components/SendContract/SendContract";
 
 export default function Home() {
-  const [isAuthorized, setIsAuthorized] = useState(false);
+  // const [isAuthorized, setIsAuthorized] = useState(false);
+  const isAuthorized = false;
   const [isTwitterConnected, setIsTwitterConnected] = useState(false);
   const [isTwitterLoading, setIsTwitterLoading] = useState(true);
   const [isTransactionSent, setIsTransactionSent] = useState(false);
   const [isEventReceived, setIsEventReceived] = useState(false);
   const [transactionError, setTransactionError] = useState("");
-  const { connectedWallet, connectedChain, connect } = useWeb3();
+  const { connectedWallet, connect, createAmbireWallet } = useWeb3();
 
   useEffect(() => {
     const checkTwitterAuth = () => {
@@ -71,17 +74,24 @@ export default function Home() {
 
     window.location.href = twitterAuthUrl;
   };
-
-  const sendTransaction = async () => {
-    if (!connectedWallet) return false;
+  const sendTransaction = async (): Promise<void> => {
+    console.log("sendTransaction called");
+    if (!connectedWallet) {
+      console.error("No connected wallet found.");
+      return; // Возвращаем void
+    }
 
     const code = sessionStorage.getItem("code");
     const verifier = sessionStorage.getItem("verifier");
 
-    if (!code || !verifier) return false;
+    if (!code || !verifier) {
+      console.error("Missing code or verifier in session storage.");
+      return; // Возвращаем void
+    }
 
     try {
       const browserProvider = new ethers.BrowserProvider(
+        //@ts-ignore
         window.ethereum,
         84532
       );
@@ -90,16 +100,21 @@ export default function Home() {
 
       const address = await signer.getAddress();
       const balance = await browserProvider.getBalance(address);
+      const balanceEther = ethers.formatEther(balance);
 
+      console.log("balance", balance, balanceEther);
       const estimatedGas =
         await contract.requestTwitterVerification.estimateGas(
           code,
           verifier,
           true
         );
+      console.log("estimatedGas", estimatedGas);
       const gasPrice = await browserProvider.getFeeData();
       const totalGasCost = BigInt(estimatedGas) * gasPrice.gasPrice!;
-
+      const ethCost = ethers.formatEther(totalGasCost);
+      console.log(`💰 Estimated Cost in ETH: ${ethCost}`);
+      //@ts-ignore
       if (balance > totalGasCost * 2n) {
         const tx = await contract.requestTwitterVerification(
           code,
@@ -112,22 +127,29 @@ export default function Home() {
         const signature = await signer.signMessage(
           "gmcoin.meme twitter-verification"
         );
+        try {
+          const response = await fetch(API_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              signature,
+              authCode: code,
+              verifier,
+              autoFollow: true,
+            }),
+          });
 
-        const response = await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            signature,
-            authCode: code,
-            verifier,
-            autoFollow: true,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          const responseData = await response.json();
+          console.log(`✅ Success: ${JSON.stringify(responseData)}`);
+        } catch (error) {
+          //@ts-ignore
+          transactionError.value = `Error sending transaction through Relayer: ${error}`;
+          console.error("❌ Error sending request:", error);
         }
-
         setIsTransactionSent(true);
       }
 
@@ -141,13 +163,13 @@ export default function Home() {
       );
 
       const handleEvents = () => {
-        return new Promise((resolve) => {
+        return new Promise<void>((resolve) => {
           infuraContract.on("TwitterConnected", (userID, wallet, event) => {
             setIsEventReceived(true);
             sessionStorage.removeItem("code");
             sessionStorage.removeItem("verifier");
             event.removeListener();
-            resolve(null);
+            resolve();
           });
 
           infuraContract.on(
@@ -158,7 +180,7 @@ export default function Home() {
               sessionStorage.removeItem("code");
               sessionStorage.removeItem("verifier");
               event.removeListener();
-              resolve(null);
+              resolve();
             }
           );
         });
@@ -211,22 +233,29 @@ export default function Home() {
 
               {/* Остальной JSX остается без изменений */}
               {isTwitterConnected && !connectedWallet && (
-                <ConnectWallet onConnect={connect} />
+                <ConnectWallet
+                  onConnect={connect}
+                  createAmbireWallet={createAmbireWallet}
+                />
               )}
               {isTwitterConnected && connectedWallet && !isTransactionSent && (
-                <div>
-                  <p className={styles.info}>
-                    Connected wallet: {connectedWallet.accounts[0].address}
-                  </p>
-                  {connectedChain && (
-                    <p className={styles.info}>
-                      Connected chain: {connectedChain.id}
-                    </p>
-                  )}
-                  <button className={styles.button} onClick={sendTransaction}>
-                    Send transaction
-                  </button>
-                </div>
+                // <div>
+                //   <p className={styles.info}>
+                //     Connected wallet: {connectedWallet.accounts[0].address}
+                //   </p>
+                //   {connectedChain && (
+                //     <p className={styles.info}>
+                //       Connected chain: {connectedChain.id}
+                //     </p>
+                //   )}
+                //   <button className={styles.button} onClick={sendTransaction}>
+                //     Send transaction
+                //   </button>
+                // </div>
+                <SendContract
+                  connectedWallet={connectedWallet}
+                  sendTransaction={sendTransaction}
+                />
               )}
 
               {isTransactionSent && (

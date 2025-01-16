@@ -5,6 +5,7 @@ import injectedModule from '@web3-onboard/injected-wallets';
 import metamaskSDK from '@web3-onboard/metamask';
 import phantomModule from '@web3-onboard/phantom';
 import { AmbireWalletModule } from '@ambire/login-sdk-web3-onboard';
+import { AmbireLoginSDK } from '@ambire/login-sdk-core'
 import type { WalletState, Chain } from '@/src/types';
 import { CHAINS } from '@/src/config';
 
@@ -83,11 +84,25 @@ export const useWeb3 = () => {
       console.error('Error connecting wallet:', error);
     }
   };
+  const createAmbireWallet = async () => {
+    try {
+      const ambireLoginSDK = new AmbireLoginSDK({
+        dappName: "GM",
+        // dappIconPath: '', // Укажите путь к значку dApp (если нужно)
+      });
 
+      // Открыть модальное окно для входа или создания аккаунта
+      ambireLoginSDK.openLogin();
+      console.log("Ambire Wallet created successfully!");
+    } catch (error) {
+      console.error("Error creating Ambire Wallet:", error);
+    }
+  };
   return {
     web3Onboard,
     connectedWallet,
     connectedChain,
     connect,
+    createAmbireWallet
   };
 };
