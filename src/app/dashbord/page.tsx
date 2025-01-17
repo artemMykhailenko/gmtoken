@@ -5,19 +5,19 @@ import { useWallet } from "@/src/context/WalletContext";
 
 const Dashboard = () => {
   const { walletAddress, balance } = useWallet();
-  const [username, setUsername] = useState("@username");
+  // const [username, setUsername] = useState("@username");
 
-  useEffect(() => {
-    // Get username from localStorage when component mounts
-    const storedUsername = localStorage.getItem("userUsername");
-    if (storedUsername) {
-      // Add @ if it doesn't exist at the start
-      const formattedUsername = storedUsername.startsWith("@")
-        ? storedUsername
-        : `@${storedUsername}`;
-      setUsername(formattedUsername);
-    }
-  }, []);
+  // useEffect(() => {
+  //   // Get username from localStorage when component mounts
+  //   const storedUsername = localStorage.getItem("userUsername");
+  //   if (storedUsername) {
+  //     // Add @ if it doesn't exist at the start
+  //     const formattedUsername = storedUsername.startsWith("@")
+  //       ? storedUsername
+  //       : `@${storedUsername}`;
+  //     setUsername(formattedUsername);
+  //   }
+  // }, []);
   const formatAddress = (address: string) => {
     if (!address || address === "Please connect wallet")
       return "Please connect wallet";
@@ -40,7 +40,7 @@ const Dashboard = () => {
 
         {/* Облако с данными */}
         <div className={styles.cloude}>
-          <p className={getUsernameFontClass(username)}>{username}</p>
+          {/* <p className={getUsernameFontClass(username)}>{username}</p> */}
           <p>{formatAddress(walletAddress)}</p>
           <p className={styles.balance}>{balance || "Loading..."}</p>
         </div>

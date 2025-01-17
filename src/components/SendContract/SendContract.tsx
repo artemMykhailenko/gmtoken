@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./SendContract.module.css";
 import ButtonBackground from "../buttons/BlueButton";
-import { AlertCircle } from "lucide-react";
 import Modal from "../modal/Modal";
+import { AlertCircle, RefreshCw } from "lucide-react";
 import { ethers } from "ethers";
 
 interface SendContractProps {
@@ -34,7 +34,20 @@ const SendContract: React.FC<SendContractProps> = ({
   }, [walletAddress]);
 
   const isFormValid = wallet.trim() !== "" && username.trim() !== "";
-
+  const formatAddress = (address: string) => {
+    if (!address || address === "Please connect wallet")
+      return "Please connect wallet";
+    return `${address.slice(0, 8)}...${address.slice(-4)}`;
+  };
+  const reconnectWallet = async () => {
+    try {
+      await connect();
+      setModalState(null);
+    } catch (error) {
+      setErrorMessage("Failed to reconnect wallet");
+      setModalState("error");
+    }
+  };
   const switchNetwork = async () => {
     try {
       //@ts-ignore
@@ -128,27 +141,14 @@ const SendContract: React.FC<SendContractProps> = ({
           <input
             type="text"
             placeholder="Enter Wallet..."
-            value={wallet}
+            value={formatAddress(wallet)}
             onChange={(e) => setWallet(e.target.value)}
             className={styles.input}
             readOnly={!!connectedWallet}
           />
-        </div>
-
-        <label className={styles.label}>X USERNAME</label>
-        <div className={styles.inputGroup}>
-          <input
-            type="text"
-            placeholder="Enter Name..."
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className={styles.input}
-          />
-          {username && (
-            <span className={styles.clear} onClick={() => setUsername("")}>
-              ✖
-            </span>
-          )}
+          <button className={styles.reconnectButton} onClick={reconnectWallet}>
+            <RefreshCw size={20} className={styles.reconnectIcon} /> reconnect
+          </button>
         </div>
 
         <div className={styles.buttonContainer}>

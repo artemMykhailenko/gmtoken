@@ -85,16 +85,38 @@
   z-index: 10;
 }
 
-.successButton:hover {
+.successButton:hover,
+.reconnectButton:hover {
   transform: perspective(1000px) translateY(-2px) rotateX(5deg);
   box-shadow: 0 8px 0 #70cc00, 0 12px 15px rgba(0, 0, 0, 0.2);
 }
 
-.successButton:active {
+.successButton:active,
+.reconnectButton:active {
   transform: perspective(1000px) translateY(4px);
   box-shadow: 0 2px 0 #70cc00, 0 4px 5px rgba(0, 0, 0, 0.2);
 }
-
+.reconnectButton {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  gap: 3px;
+  background: linear-gradient(135deg, #66ff00, #80ff00);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Cherry Bomb One", sans-serif;
+  padding: 10px 18px;
+  border-radius: 30px;
+  font-size: 14px;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transform: perspective(1000px);
+  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 6px 0 #58cc00, 0 8px 10px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
 .closeText {
   color: white;
   font-family: "Cherry Bomb One", sans-serif;

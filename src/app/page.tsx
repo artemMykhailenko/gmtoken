@@ -17,10 +17,12 @@ import ConnectWallet from "../components/connectWallet/ConnectWallet";
 import SendContract from "../components/SendContract/SendContract";
 import SunLoader from "../components/loader/loader";
 import { useWallet } from "../context/WalletContext";
+import ProgressNavigation from "../components/ProgressNavigation/ProgressNavigation";
 
 export default function Home() {
-  // const [isAuthorized, setIsAuthorized] = useState(false);
-  const isAuthorized = false;
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [previousStep, setPreviousStep] = useState(0);
   const [isTwitterConnected, setIsTwitterConnected] = useState(false);
   const [isTwitterLoading, setIsTwitterLoading] = useState(true);
   const [isTransactionSent, setIsTransactionSent] = useState(false);
@@ -228,9 +230,39 @@ export default function Home() {
 
     handleTwitterCallback();
   }, []);
+  const handleStepChange = (newStep: number) => {
+    setPreviousStep(currentStep);
+    setCurrentStep(newStep);
+  };
+  const handleBack = () => {
+    // Сброс состояний в зависимости от текущего шага
+    if (currentStep === 2) {
+      setIsTransactionSent(false);
+    } else if (currentStep === 1) {
+      setIsTwitterConnected(false);
+      sessionStorage.removeItem("code");
+      sessionStorage.removeItem("verifier");
+    }
+  };
+  useEffect(() => {
+    if (isTwitterConnected && currentStep === 0) {
+      setCurrentStep(1);
+    }
+  }, [isTwitterConnected]);
 
+  // Update step when wallet is connected
+  useEffect(() => {
+    if (connectedWallet && currentStep === 1) {
+      setCurrentStep(2);
+    }
+  }, [connectedWallet]);
   return (
     <main className="min-h-screen bg-white">
+      <ProgressNavigation
+        currentStep={currentStep}
+        onBack={handleBack}
+        onStepChange={handleStepChange}
+      />
       {isAuthorized ? (
         <div className="p-4">Authorized!</div>
       ) : (
