@@ -55,3 +55,15 @@
   font-weight: bold;
   margin: 1rem 0;
 }
+.loaderContainer {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: url("/image/bg.png") no-repeat center center;
+  background-size: cover;
+  overflow: hidden;
+  backdrop-filter: blur(6px);
+  z-index: 1000;
+}

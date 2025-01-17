@@ -1,0 +1,396 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  background: url("/image/bg.png") no-repeat center center;
+  background-size: cover;
+  position: relative;
+  overflow: hidden;
+}
+.infoContainer {
+  margin-top: 100px;
+  display: flex;
+  gap: 50px;
+}
+.cloude img {
+  width: 500px;
+}
+.cosmoman {
+  animation: float 6s ease-in-out infinite;
+  transform-origin: center;
+  position: relative;
+}
+
+.cosmoman img {
+  width: 200px;
+  transition: transform 0.3s ease;
+  filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.2));
+}
+
+.cosmoman:hover img {
+  transform: scale(1.1) rotate(5deg);
+  filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.3));
+}
+.rainbow {
+  position: absolute;
+  left: 25%;
+  transform: translateX(-50%);
+  bottom: 0px !important;
+  opacity: 0;
+  filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.1));
+  animation: rainbowRise 1.5s ease-out forwards;
+  animation-delay: 3s;
+}
+
+.rainbow img {
+  width: 400px;
+  animation: rainbowPulse 3s ease-in-out infinite;
+  animation-delay: 4.5s;
+}
+
+.cloud1 {
+  position: absolute;
+  left: -100%;
+  bottom: -20px;
+  filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.1));
+  opacity: 0;
+  animation: cloudEntrance1 2s ease-out forwards,
+    floatCloud1 30s linear infinite 2s, cloudBob 5s ease-in-out infinite 2s;
+}
+.cloud1 img {
+  width: 820px;
+}
+
+.cloud2 {
+  position: absolute;
+  right: -100px !important;
+  bottom: -20px;
+  filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.1));
+  opacity: 0;
+  animation: cloudEntrance2 2s ease-out forwards 0.5s,
+    floatCloud2 35s linear infinite 2.5s, cloudBob 5s ease-in-out infinite 2.5s;
+}
+.cloud2 img {
+  width: 600px;
+}
+
+.cloude {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  gap: 15px;
+  padding: 20px;
+  background: url("/small-cloude.png") no-repeat center center;
+  background-size: cover;
+  width: 500px;
+  height: 240px;
+  animation: fadeIn 1.5s ease-in-out forwards, float 6s ease-in-out infinite;
+  animation-delay: 0s, 1.5s;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.15));
+  transition: all 0.3s ease;
+}
+.cloude:hover {
+  filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.2));
+  transform: translateY(-5px);
+}
+
+/* Стили для текста внутри облака */
+.cloude p {
+  font-size: 32px;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
+  opacity: 0;
+  transform: scale(1.2);
+  animation: textAppear 1s ease-out forwards 1.5s;
+  position: relative;
+  transition: all 0.3s ease;
+  -webkit-text-stroke: 0.5px rgba(0, 0, 0, 0.8);
+}
+.cloude p:hover {
+  transform: scale(1.05);
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+}
+.balance {
+  font-size: 32px !important;
+  font-weight: bold !important;
+  background: linear-gradient(45deg, #ffdd44, #ffa726);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none !important;
+
+  animation: textAppear 1s ease-out forwards 2s,
+    colorShift 5s infinite alternate !important;
+  position: relative;
+}
+
+.balance::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  filter: blur(8px);
+  background: inherit;
+  z-index: -1;
+  opacity: 0.5;
+  animation: glowPulse 2s infinite;
+}
+
+/* Эффект печати текста */
+@keyframes textAppear {
+  0% {
+    opacity: 0;
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Первое поле (Username) */
+.cloude p:first-of-type {
+  font-size: 30px;
+  animation: textAppear 1s ease-out forwards 1s;
+}
+
+/* Эффект плавного появления облака */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes cloudEntrance1 {
+  0% {
+    opacity: 0;
+    left: -100%;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    left: -100px;
+    transform: scale(1);
+  }
+}
+
+@keyframes cloudEntrance2 {
+  0% {
+    opacity: 0;
+    right: -100%;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    right: 0;
+    transform: scale(1);
+  }
+}
+
+@keyframes rainbowRise {
+  0% {
+    opacity: 0;
+    bottom: -200px;
+    transform: translateX(-50%) rotate(-5deg) scale(0.8);
+  }
+  50% {
+    opacity: 0.5;
+    bottom: 40px;
+    transform: translateX(-50%) rotate(2deg) scale(1.1);
+  }
+  75% {
+    transform: translateX(-50%) rotate(-1deg) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    bottom: 20px;
+    transform: translateX(-50%) rotate(0deg) scale(1);
+  }
+}
+
+@keyframes rainbowPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    filter: brightness(1) saturate(1);
+  }
+  50% {
+    transform: scale(1.05);
+    filter: brightness(1.2) saturate(1.2);
+  }
+}
+
+@keyframes floatCloud1 {
+  0%,
+  100% {
+    transform: translateX(0) scale(1);
+  }
+  50% {
+    transform: translateX(100px) scale(1.05);
+  }
+}
+
+@keyframes floatCloud2 {
+  0%,
+  100% {
+    transform: translateX(0) scale(1);
+  }
+  50% {
+    transform: translateX(-100px) scale(1.05);
+  }
+}
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+@keyframes glowPulse {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.1);
+  }
+}
+
+/* Анимация для облаков с параллакс-эффектом */
+.cloud1,
+.cloud2 {
+  position: absolute;
+  bottom: -20px;
+  filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.1));
+  opacity: 0;
+  will-change: transform;
+}
+
+.cloud1 {
+  left: -100%;
+  animation: cloudEntrance1 2s ease-out forwards,
+    floatCloud1 30s linear infinite 2s, cloudParallax 8s ease-in-out infinite;
+}
+
+.cloud2 {
+  right: -100px !important;
+  animation: cloudEntrance2 2s ease-out forwards 0.5s,
+    floatCloud2 35s linear infinite 2.5s,
+    cloudParallax 8s ease-in-out infinite reverse;
+}
+
+@keyframes cloudParallax {
+  0%,
+  100% {
+    transform: translateZ(0) scale(1);
+  }
+  50% {
+    transform: translateZ(50px) scale(1.05);
+  }
+}
+@media (max-width: 790px) {
+  .infoContainer {
+    flex-direction: column;
+    align-items: center;
+    margin-top: 50px;
+    gap: 30px;
+  }
+  .cloud1 img {
+    width: 600px;
+  }
+  .cloud2 img {
+    width: 500px;
+  }
+  .rainbow img {
+    width: 300px;
+  }
+  .cloude {
+    width: 440px;
+    height: 210px;
+  }
+  .cosmoman img {
+    width: 150px;
+  }
+  .cloude p {
+    font-size: 28px;
+  }
+  .balance {
+    font-size: 30px;
+  }
+}
+@media (max-width: 790px) {
+  .cloud1 img {
+    width: 500px;
+  }
+  .cloud2 img {
+    width: 400px;
+  }
+  .rainbow img {
+    width: 250px;
+  }
+  .cloude p {
+    font-size: 24px;
+  }
+  .balance {
+    font-size: 26px;
+  }
+  .cloude {
+    gap: 0;
+    width: 400px;
+    height: 190px;
+  }
+  .infoContainer {
+    margin-top: 40px;
+    gap: 20px;
+  }
+}
+@media (max-width: 450px) {
+  .cloud1 img {
+    width: 400px;
+  }
+  .cosmoman img {
+    width: 130px;
+  }
+  .cloud2 img {
+    width: 300px;
+  }
+  .rainbow {
+    bottom: -10px !important;
+  }
+  .rainbow img {
+    width: 200px;
+  }
+  .cloude p {
+    font-size: 20px;
+  }
+  .balance {
+    font-size: 23px !important;
+  }
+  .cloude {
+    gap: 0;
+    width: 300px;
+    height: 145px;
+  }
+  .infoContainer {
+    margin-top: 60px;
+    gap: 20px;
+  }
+  .cloude p:first-of-type {
+    font-size: 20px;
+  }
+}

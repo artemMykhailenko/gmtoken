@@ -16,6 +16,7 @@ import {
 import ConnectWallet from "../components/connectWallet/ConnectWallet";
 import SendContract from "../components/SendContract/SendContract";
 import SunLoader from "../components/loader/loader";
+import { useWallet } from "../context/WalletContext";
 
 export default function Home() {
   // const [isAuthorized, setIsAuthorized] = useState(false);
@@ -26,7 +27,17 @@ export default function Home() {
   const [isEventReceived, setIsEventReceived] = useState(false);
   const [transactionError, setTransactionError] = useState("");
   const { connectedWallet, connect, createAmbireWallet } = useWeb3();
+  const [transactionStatus, setTransactionStatus] = useState<
+    "idle" | "pending" | "success" | "error"
+  >("idle");
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const { updateWalletInfo } = useWallet();
 
+  useEffect(() => {
+    if (connectedWallet?.accounts[0]?.address) {
+      updateWalletInfo(connectedWallet.accounts[0].address);
+    }
+  }, [connectedWallet]);
   useEffect(() => {
     const checkTwitterAuth = () => {
       // Сначала проверяем URL параметры
@@ -76,45 +87,47 @@ export default function Home() {
     window.location.href = twitterAuthUrl;
   };
   const sendTransaction = async (): Promise<void> => {
-    console.log("sendTransaction called");
     if (!connectedWallet) {
-      console.error("No connected wallet found.");
-      return; // Возвращаем void
+      console.log("Wallet is not connected. Connecting...");
+      await connect();
+      return;
     }
 
     const code = sessionStorage.getItem("code");
     const verifier = sessionStorage.getItem("verifier");
 
     if (!code || !verifier) {
-      console.error("Missing code or verifier in session storage.");
-      return; // Возвращаем void
+      setErrorMessage("Missing code or verifier in session storage.");
+      setTransactionStatus("error");
+      return;
     }
 
     try {
+      setTransactionStatus("pending");
+
       const browserProvider = new ethers.BrowserProvider(
         //@ts-ignore
         window.ethereum,
         84532
       );
+
       const signer = await browserProvider.getSigner();
       const contract = new Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
 
       const address = await signer.getAddress();
       const balance = await browserProvider.getBalance(address);
-      const balanceEther = ethers.formatEther(balance);
 
-      console.log("balance", balance, balanceEther);
       const estimatedGas =
         await contract.requestTwitterVerification.estimateGas(
           code,
           verifier,
           true
         );
-      console.log("estimatedGas", estimatedGas);
+
       const gasPrice = await browserProvider.getFeeData();
       const totalGasCost = BigInt(estimatedGas) * gasPrice.gasPrice!;
-      const ethCost = ethers.formatEther(totalGasCost);
-      console.log(`💰 Estimated Cost in ETH: ${ethCost}`);
+
+      let transactionPromise;
       //@ts-ignore
       if (balance > totalGasCost * 2n) {
         const tx = await contract.requestTwitterVerification(
@@ -122,79 +135,82 @@ export default function Home() {
           verifier,
           true
         );
-        await tx.wait();
-        setIsTransactionSent(true);
+        transactionPromise = tx.wait();
       } else {
         const signature = await signer.signMessage(
           "gmcoin.meme twitter-verification"
         );
-        try {
-          const response = await fetch(API_URL, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              signature,
-              authCode: code,
-              verifier,
-              autoFollow: true,
-            }),
-          });
 
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-          const responseData = await response.json();
-          console.log(`✅ Success: ${JSON.stringify(responseData)}`);
-        } catch (error) {
-          //@ts-ignore
-          transactionError.value = `Error sending transaction through Relayer: ${error}`;
-          console.error("❌ Error sending request:", error);
-        }
-        setIsTransactionSent(true);
+        transactionPromise = fetch(API_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            signature,
+            authCode: code,
+            verifier,
+            autoFollow: true,
+          }),
+        });
       }
 
-      const infuraProvider = new ethers.WebSocketProvider(
-        "wss://base-sepolia.infura.io/ws/v3/46c83ef6f9834cc49b76640eededc9f5"
-      );
-      const infuraContract = new ethers.Contract(
-        CONTRACT_ADDRESS,
-        CONTRACT_ABI,
-        infuraProvider
-      );
+      // Создаем промис для прослушивания событий
+      const eventPromise = new Promise((resolve, reject) => {
+        const infuraProvider = new ethers.WebSocketProvider(
+          "wss://base-sepolia.infura.io/ws/v3/46c83ef6f9834cc49b76640eededc9f5"
+        );
 
-      const handleEvents = () => {
-        return new Promise<void>((resolve) => {
-          infuraContract.on("TwitterConnected", (userID, wallet, event) => {
-            setIsEventReceived(true);
-            sessionStorage.removeItem("code");
-            sessionStorage.removeItem("verifier");
-            event.removeListener();
-            resolve();
-          });
+        const infuraContract = new ethers.Contract(
+          CONTRACT_ADDRESS,
+          CONTRACT_ABI,
+          infuraProvider
+        );
 
-          infuraContract.on(
-            "TwitterConnectError",
-            (wallet, errorMsg, event) => {
-              setIsEventReceived(true);
-              setTransactionError(errorMsg);
-              sessionStorage.removeItem("code");
-              sessionStorage.removeItem("verifier");
-              event.removeListener();
-              resolve();
-            }
-          );
+        const timeout = setTimeout(() => {
+          reject(new Error("Event listening timeout"));
+        }, 60000); // 60 секунд таймаут
+
+        infuraContract.on("TwitterConnected", (userID, wallet, event) => {
+          clearTimeout(timeout);
+          resolve("success");
+          event.removeListener();
         });
-      };
 
-      await handleEvents();
-    } catch (error) {
-      setTransactionError(
-        `Error: ${error instanceof Error ? error.message : String(error)}`
-      );
+        infuraContract.on("TwitterConnectError", (wallet, errorMsg, event) => {
+          clearTimeout(timeout);
+          reject(new Error(errorMsg));
+          event.removeListener();
+        });
+      });
+
+      // Ждем завершения транзакции И получения события
+      await Promise.all([transactionPromise, eventPromise]);
+
+      // Только если оба промиса разрешились успешно
+      setTransactionStatus("success");
+      sessionStorage.removeItem("code");
+      sessionStorage.removeItem("verifier");
+    } catch (error: any) {
+      console.error("Transaction Error:", error);
+
+      if (error?.code === 4001) {
+        setErrorMessage(
+          "Вы отменили транзакцию. Пожалуйста, попробуйте снова!"
+        );
+      } else {
+        setErrorMessage(`Ошибка при отправке транзакции: ${error.message}`);
+      }
+
+      setTransactionStatus("error");
+      throw error; // Пробрасываем ошибку дальше
     }
   };
-
+  // useEffect(() => {
+  //   if (connectedWallet && !isTransactionSent) {
+  //     console.log("Wallet connected, attempting transaction...");
+  //     sendTransaction();
+  //   }
+  // }, [connectedWallet]);
   useEffect(() => {
     const handleTwitterCallback = () => {
       const params = new URLSearchParams(window.location.search);
@@ -221,7 +237,9 @@ export default function Home() {
         <div>
           {isTwitterLoading ? (
             <div className="flex items-center justify-center min-h-screen">
-              <SunLoader />
+              <div className={styles.loaderContainer}>
+                <SunLoader />
+              </div>
             </div>
           ) : (
             <>
@@ -240,23 +258,11 @@ export default function Home() {
                 />
               )}
               {isTwitterConnected && connectedWallet && !isTransactionSent && (
-                // <div>
-                //   <p className={styles.info}>
-                //     Connected wallet: {connectedWallet.accounts[0].address}
-                //   </p>
-                //   {connectedChain && (
-                //     <p className={styles.info}>
-                //       Connected chain: {connectedChain.id}
-                //     </p>
-                //   )}
-                //   <button className={styles.button} onClick={sendTransaction}>
-                //     Send transaction
-                //   </button>
-                // </div>
                 <SendContract
                   connectedWallet={connectedWallet}
                   walletAddress={connectedWallet.accounts[0]?.address || ""}
                   sendTransaction={sendTransaction}
+                  connect={connect}
                 />
               )}
 

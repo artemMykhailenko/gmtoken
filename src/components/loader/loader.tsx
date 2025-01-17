@@ -3,7 +3,7 @@ import styles from "./Loader.module.css";
 
 const SunLoader = () => {
   return (
-    <div className={styles.loaderContainer}>
+    <>
       {/* Светящееся солнце */}
       <div className={styles.sunWrapper}>
         <img src="/sun.png" alt="Sun" className={styles.sunImage} />
@@ -41,10 +41,7 @@ const SunLoader = () => {
           ></div>
         ))}
       </div>
-
-      {/* Вращающийся орбитальный круг */}
-      {/* <div className={styles.orbitRing}></div> */}
-    </div>
+    </>
   );
 };
 

@@ -1,0 +1,187 @@
+/* Modal.module.css */
+.overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 220, 100, 0.2);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  animation: overlayFade 0.3s ease-out;
+}
+
+.modal {
+  position: relative;
+  background: #fff;
+  padding: 20px;
+  border-radius: 40px;
+  max-width: 500px;
+  width: 90%;
+  min-height: 200px;
+  animation: modalPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(255, 166, 0, 0.2), 0 10px 30px rgba(0, 0, 0, 0.1),
+    inset 0 2px 0 rgba(255, 255, 255, 1);
+  border: 3px solid #ffb700;
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  margin-top: 30px;
+  font-family: "Cherry Bomb One", sans-serif;
+  font-size: 24px;
+  color: #333;
+  text-align: center;
+  animation: contentFade 0.6s 0.3s both;
+}
+
+.greeting {
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  background: #ffe4b5;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: bold;
+  color: #b8860b;
+  transform: rotate(10deg);
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+  animation: greetingBounce 2s ease-in-out infinite;
+}
+
+/* Close button */
+.closeButton {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, #ffb700, #ff8c00);
+  border: none;
+  padding: 10px 24px;
+  border-radius: 30px;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transform: perspective(1000px);
+  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 6px 0 #cc7000, 0 8px 10px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+.closeButton:hover {
+  transform: perspective(1000px) translateY(-2px) rotateX(5deg);
+  box-shadow: 0 8px 0 #cc7000, 0 12px 15px rgba(0, 0, 0, 0.2);
+}
+
+.closeButton:active {
+  transform: perspective(1000px) translateY(4px);
+  box-shadow: 0 2px 0 #cc7000, 0 4px 5px rgba(0, 0, 0, 0.2);
+}
+
+.closeText {
+  color: white;
+  font-family: "Cherry Bomb One", sans-serif;
+  font-size: 18px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Animations */
+@keyframes overlayFade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  60% {
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes sunFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes blink {
+  0%,
+  90%,
+  100% {
+    transform: scaleY(1);
+  }
+  95% {
+    transform: scaleY(0.1);
+  }
+}
+
+@keyframes greetingBounce {
+  0%,
+  100% {
+    transform: rotate(15deg) translateY(0);
+  }
+  50% {
+    transform: rotate(15deg) translateY(-5px);
+  }
+}
+
+@keyframes contentFade {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Variant styles */
+.success .content {
+  color: #2ecc71;
+}
+
+.error .content {
+  color: #e74c3c;
+}
+
+/* Media Queries */
+@media (max-width: 480px) {
+  .modal {
+    padding: 30px 20px;
+    border-radius: 30px;
+  }
+
+  .content {
+    font-size: 20px;
+  }
+
+  .sunContainer {
+    transform: scale(0.8);
+  }
+
+  .closeButton {
+    padding: 8px 16px;
+  }
+
+  .closeText {
+    font-size: 16px;
+  }
+}

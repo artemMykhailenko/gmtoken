@@ -69,25 +69,6 @@
   animation: glowEffect 3s infinite ease-in-out;
 }
 
-/* 🌞 Вращающиеся лучи солнца */
-.sunRays {
-  position: absolute;
-  width: 180px;
-  height: 180px;
-  animation: rotateSun 6s linear infinite;
-}
-
-/* .sunRay {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 6px;
-  height: 50px;
-  background: linear-gradient(to top, rgba(255, 215, 0, 0.6), transparent);
-  transform-origin: bottom center;
-  animation: rayPulse 2s infinite alternate ease-in-out;
-} */
-
 /* 🪐 Орбитальные частицы */
 .orbit {
   position: absolute;
