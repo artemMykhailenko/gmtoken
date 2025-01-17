@@ -2,9 +2,9 @@
 import React, { useEffect, useState } from "react";
 import type { TwitterConnectProps } from "@/src/types";
 import styles from "./TwitterConnect.module.css";
-import cloude from "@/public/image/xcloude.png";
-import plane from "@/public/image/planepng.png";
-import whcloude from "@/public/image/whcloude.png";
+import cloude from "@/public/image/xcloude.webp";
+import plane from "@/public/image/planepng.webp";
+import whcloude from "@/public/image/whcloude.webp";
 import bird from "@/public/image/birds.png";
 import ButtonBackground from "./buttons/BlueButton";
 

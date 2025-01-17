@@ -20,6 +20,7 @@
   z-index: 1000;
 }
 .title {
+  -webkit-text-stroke: 1px white;
   margin-top: 50px;
   position: relative;
   z-index: 10;
@@ -116,6 +117,7 @@
 }
 .rainbow img {
   width: 330px;
+  height: 102vh;
 }
 
 /* Шарик */
@@ -707,6 +709,7 @@
   font-family: "Cherry Bomb One", sans-serif;
   color: #666;
 }
+
 @media (max-width: 1357px) {
   .rainbow {
     left: -80px !important;

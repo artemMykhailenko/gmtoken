@@ -26,6 +26,7 @@ const SendContract: React.FC<SendContractProps> = ({
     "loading" | "error" | "success" | "wrongNetwork" | null
   >(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isWrongNetwork, setIsWrongNetwork] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -33,6 +34,49 @@ const SendContract: React.FC<SendContractProps> = ({
   }, [walletAddress]);
 
   const isFormValid = wallet.trim() !== "" && username.trim() !== "";
+
+  const switchNetwork = async () => {
+    try {
+      //@ts-ignore
+      await window.ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: "0x14a34" }], // 84532 in hex
+      });
+      setIsWrongNetwork(false);
+      setModalState(null);
+    } catch (switchError: any) {
+      // This error code means the chain hasn't been added to MetaMask
+      if (switchError.code === 4902) {
+        try {
+          //@ts-ignore
+          await window.ethereum.request({
+            method: "wallet_addEthereumChain",
+            params: [
+              {
+                chainId: "0x14a34",
+                chainName: "Base Sepolia",
+                nativeCurrency: {
+                  name: "ETH",
+                  symbol: "ETH",
+                  decimals: 18,
+                },
+                rpcUrls: ["https://sepolia.base.org"],
+                blockExplorerUrls: ["https://sepolia.basescan.org"],
+              },
+            ],
+          });
+          setIsWrongNetwork(false);
+          setModalState(null);
+        } catch (addError) {
+          setErrorMessage("Failed to add network to wallet");
+          setModalState("error");
+        }
+      } else {
+        setErrorMessage("Failed to switch network");
+        setModalState("error");
+      }
+    }
+  };
 
   const handleSendTransaction = async () => {
     if (!isFormValid) return;
@@ -49,8 +93,9 @@ const SendContract: React.FC<SendContractProps> = ({
     const network = await provider.getNetwork();
 
     if (network.chainId.toString() !== "84532") {
+      setIsWrongNetwork(true);
       setErrorMessage("Please switch to Base Sepolia network");
-      setModalState("error");
+      setModalState("wrongNetwork");
       return;
     }
 
@@ -71,10 +116,10 @@ const SendContract: React.FC<SendContractProps> = ({
   return (
     <div className={styles.container}>
       <div className={styles.rainbow}>
-        <img src="/image/contract/rainbow.png" alt="Rainbow" />
+        <img src="/image/contract/rainbow.webp" alt="Rainbow" />
       </div>
       <div className={styles.balloon}>
-        <img src="/image/contract/ballon.png" alt="Hot Air Balloon" />
+        <img src="/image/contract/ballon.webp" alt="Hot Air Balloon" />
       </div>
       <p className={styles.title}>SEND TRANSACTIONS</p>
       <div className={styles.form}>
@@ -88,11 +133,6 @@ const SendContract: React.FC<SendContractProps> = ({
             className={styles.input}
             readOnly={!!connectedWallet}
           />
-          {/* {wallet && (
-            <span className={styles.clear} onClick={() => setWallet("")}>
-              ✖
-            </span>
-          )} */}
         </div>
 
         <label className={styles.label}>X USERNAME</label>
@@ -155,6 +195,20 @@ const SendContract: React.FC<SendContractProps> = ({
                   <span>N</span>
                   <span>G</span>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {modalState === "wrongNetwork" && (
+            <div className={styles.modalContent}>
+              <p>{errorMessage}</p>
+              <div className={styles.switchNetworkButton}>
+                <button
+                  className={styles.successButton}
+                  onClick={switchNetwork}
+                >
+                  <span className={styles.buttonText}>SWITCH NETWORK</span>
+                </button>
               </div>
             </div>
           )}

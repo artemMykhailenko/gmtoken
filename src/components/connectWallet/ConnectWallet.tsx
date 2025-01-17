@@ -17,7 +17,7 @@ const ConnectWallet: React.FC<AuthComponentProps> = ({
     <div className={styles.container}>
       <div className={styles.header}>
         <div className={styles.airship}>
-          <img src="/image/wallet/airship.png" alt="Airship" />
+          <img src="/image/wallet/airship.webp" alt="Airship" />
         </div>
       </div>
       <svg
@@ -54,15 +54,15 @@ const ConnectWallet: React.FC<AuthComponentProps> = ({
 
       <div className={styles.decorations}>
         <div className={styles.rainbow}>
-          <img src="/image/wallet/rainbow.png" alt="Rainbow" />
+          <img src="/image/wallet/rainbow.webp" alt="Rainbow" />
         </div>
 
         <div className={styles.cloud1}>
-          <img src="/image/wallet/cloud1.png" alt="Cloud1" />
+          <img src="/image/wallet/cloud1.webp" alt="Cloud1" />
         </div>
 
         <div className={styles.cloud2}>
-          <img src="/image/wallet/cloud2.png" alt="Cloud2" />
+          <img src="/image/wallet/cloud2.webp" alt="Cloud2" />
         </div>
       </div>
     </div>
