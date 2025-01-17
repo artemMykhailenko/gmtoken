@@ -86,7 +86,7 @@ const SendContract: React.FC<SendContractProps> = ({
       await connect();
       return;
     }
-
+    localStorage.setItem("userUsername", username);
     // Check network
     //@ts-ignore
     const provider = new ethers.BrowserProvider(window.ethereum);

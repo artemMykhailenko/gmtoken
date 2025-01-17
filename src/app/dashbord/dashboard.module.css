@@ -303,6 +303,13 @@
     transform: translateZ(50px) scale(1.05);
   }
 }
+.mediumFont {
+  font-size: 24px !important;
+}
+
+.smallFont {
+  font-size: 22px !important;
+}
 @media (max-width: 790px) {
   .infoContainer {
     flex-direction: column;
@@ -329,6 +336,9 @@
   .cloude p {
     font-size: 28px;
   }
+  .cloude p:first-of-type {
+    font-size: 26px;
+  }
   .balance {
     font-size: 30px;
   }
@@ -348,6 +358,9 @@
   }
   .balance {
     font-size: 26px;
+  }
+  .cloude p:first-of-type {
+    font-size: 24Fpx;
   }
   .cloude {
     gap: 0;
