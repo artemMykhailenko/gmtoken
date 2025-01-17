@@ -88,11 +88,11 @@ const SendContract: React.FC<SendContractProps> = ({
             className={styles.input}
             readOnly={!!connectedWallet}
           />
-          {wallet && (
+          {/* {wallet && (
             <span className={styles.clear} onClick={() => setWallet("")}>
               ✖
             </span>
-          )}
+          )} */}
         </div>
 
         <label className={styles.label}>X USERNAME</label>
