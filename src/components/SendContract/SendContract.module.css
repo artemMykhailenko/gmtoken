@@ -1,7 +1,8 @@
 .container {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  /* justify-content: center; */
   height: 100vh;
   background: url("/image/bg.png") no-repeat center center;
   background-size: cover;
@@ -18,29 +19,11 @@
   justify-content: center;
   z-index: 1000;
 }
-.loaderOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(5px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-.switchButton {
-  background: linear-gradient(90deg, #007bff, #0056b3);
-  color: white;
-  font-size: 16px;
-  padding: 10px 20px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.switchButton:hover {
-  background: linear-gradient(90deg, #0056b3, #003b7a);
+.title {
+  margin-top: 50px;
+  position: relative;
+  z-index: 10;
+  font-size: 32px;
 }
 
 .errorText {
@@ -152,7 +135,7 @@
 .form {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 5px;
   padding: 20px;
   z-index: 3;
   position: relative;
@@ -756,7 +739,7 @@
   }
   .label {
     margin-left: 40px;
-    margin-top: 10px;
+    /* margin-top: 10px; */
     font-size: 25px;
   }
 }
@@ -780,17 +763,18 @@
   .rainbow {
     left: -110px !important;
   }
+  .title {
+    font-size: 26px;
+  }
   .balloon {
     bottom: 0 !important;
     left: -10px;
   }
   .form {
     gap: 5px;
-    margin-top: 40px;
+    /* margin-top: 40px; */
   }
-  .container {
-    align-items: flex-start;
-  }
+
   .label {
     font-size: 22px;
   }
@@ -812,7 +796,7 @@
     width: 340px !important;
   }
 }
-@media (max-width: 530px) {
+@media (max-width: 450px) {
   .buttonContainer {
     margin-left: 0;
     align-self: center;
@@ -827,5 +811,27 @@
   .input {
     height: 50px;
     width: 310px !important;
+  }
+  .rainbow img {
+    width: 200px !important;
+    height: 100vh;
+  }
+  .balloon img {
+    width: 190px !important;
+  }
+}
+@media (max-width: 400px) {
+  .rainbow img {
+    width: 180px !important;
+    height: 100vh;
+  }
+  .balloon img {
+    width: 170px !important;
+  }
+  .rainbow {
+    left: -110px !important;
+  }
+  .balloon {
+    bottom: -20px !important;
   }
 }
