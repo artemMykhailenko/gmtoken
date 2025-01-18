@@ -21,7 +21,7 @@ const Dashboard = () => {
   const formatAddress = (address: string) => {
     if (!address || address === "Please connect wallet")
       return "Please connect wallet";
-    return `${address.slice(0, 18)}...${address.slice(-4)}`;
+    return `${address.slice(0, 10)}...${address.slice(-4)}`;
   };
   const getUsernameFontClass = (username: string) => {
     if (username.length > 20) {

@@ -343,7 +343,9 @@
   }
 
   .backButton {
-    padding: 6px 12px;
-    font-size: 13px;
+    top: 20px;
+    padding: 4px 6px;
+    font-size: 12px;
+    left: -20%;
   }
 }

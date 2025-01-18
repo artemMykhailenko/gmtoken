@@ -844,7 +844,17 @@
   .balloon img {
     width: 190px !important;
   }
+  .reconnectButton {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    gap: 3px;
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 12px;
+  }
 }
+
 @media (max-width: 400px) {
   .rainbow img {
     width: 180px !important;
