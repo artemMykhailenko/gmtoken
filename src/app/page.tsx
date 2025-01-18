@@ -91,7 +91,7 @@ export default function Home() {
   };
   const sendTransaction = async (): Promise<void> => {
     if (!connectedWallet) {
-      console.log("Wallet is not connected. Connecting...");
+      console.log("❌ Wallet is not connected. Connecting...");
       await connect();
       return;
     }
@@ -100,13 +100,14 @@ export default function Home() {
     const verifier = sessionStorage.getItem("verifier");
 
     if (!code || !verifier) {
-      setErrorMessage("Missing code or verifier in session storage.");
+      setErrorMessage("Missing authentication data.");
       setTransactionStatus("error");
       return;
     }
 
     try {
       setTransactionStatus("pending");
+      console.log("🚀 Sending transaction...");
 
       const browserProvider = new ethers.BrowserProvider(
         //@ts-ignore
@@ -120,19 +121,23 @@ export default function Home() {
       const address = await signer.getAddress();
       const balance = await browserProvider.getBalance(address);
 
+      console.log(`💰 User balance: ${ethers.formatEther(balance)} ETH`);
+
       const estimatedGas =
         await contract.requestTwitterVerification.estimateGas(
           code,
           verifier,
           true
         );
+      console.log(`⛽ Estimated gas: ${estimatedGas.toString()}`);
 
       const gasPrice = await browserProvider.getFeeData();
       const totalGasCost = BigInt(estimatedGas) * gasPrice.gasPrice!;
+      console.log(`💰 Gas cost: ${ethers.formatEther(totalGasCost)} ETH`);
 
       let transactionPromise;
-
       if (balance > totalGasCost * 2n) {
+        console.log("🔹 Sending contract transaction...");
         const tx = await contract.requestTwitterVerification(
           code,
           verifier,
@@ -140,15 +145,14 @@ export default function Home() {
         );
         transactionPromise = tx.wait();
       } else {
+        console.log("🔹 Using API relay...");
         try {
           const signature = await signer.signMessage(
             "gmcoin.meme twitter-verification"
           );
           const response = await fetch(API_URL, {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               signature,
               authCode: code,
@@ -165,12 +169,12 @@ export default function Home() {
 
           transactionPromise = response.json();
         } catch (apiError: any) {
-          console.error("API Error:", apiError);
+          console.error("❌ API Error:", apiError);
           throw new Error(`Relayer service error: ${apiError.message}`);
         }
       }
 
-      // Create event listening promise
+      // Event listening
       const eventPromise = new Promise((resolve, reject) => {
         const infuraProvider = new ethers.WebSocketProvider(
           "wss://base-sepolia.infura.io/ws/v3/46c83ef6f9834cc49b76640eededc9f5"
@@ -195,12 +199,14 @@ export default function Home() {
         }, 60000);
 
         infuraContract.on("TwitterConnected", (userID, wallet, event) => {
+          console.log("✅ Twitter connected event received!");
           clearTimeout(timeout);
           cleanup();
           resolve("success");
         });
 
         infuraContract.on("TwitterConnectError", (wallet, errorMsg, event) => {
+          console.error(`❌ Twitter connect error: ${errorMsg}`);
           clearTimeout(timeout);
           cleanup();
           reject(new Error(errorMsg));
@@ -216,10 +222,16 @@ export default function Home() {
         throw new Error(`Transaction event error: ${eventError.message}`);
       }
     } catch (error: any) {
-      console.error("Transaction Error:", error);
+      console.error("❌ Transaction Error:", error);
 
       if (error?.code === 4001) {
-        setErrorMessage("You cancelled the transaction. Please try again!");
+        setErrorMessage("Transaction cancelled by user.");
+      } else if (error?.message.includes("insufficient funds")) {
+        setErrorMessage("Insufficient balance to process transaction.");
+      } else if (error?.message.includes("Relayer service error")) {
+        setErrorMessage("Relayer service error. Try again later.");
+      } else if (error?.message.includes("timeout")) {
+        setErrorMessage("Transaction timed out. Please try again.");
       } else {
         setErrorMessage(`Transaction failed: ${error.message}`);
       }
@@ -228,6 +240,7 @@ export default function Home() {
       throw error;
     }
   };
+
   // useEffect(() => {
   //   if (connectedWallet && !isTransactionSent) {
   //     console.log("Wallet connected, attempting transaction...");

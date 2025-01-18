@@ -122,16 +122,27 @@ const SendContract: React.FC<SendContractProps> = ({
     } catch (error: any) {
       console.error("Transaction error:", error);
 
-      if (error?.code === 4001) {
-        setErrorMessage("You cancelled the transaction. Please try again!");
-      } else if (error.message.includes("Relayer service error")) {
-        setErrorMessage(
-          "Transaction failed: Insufficient balance and relay service unavailable"
-        );
+      // Обработка специфических ошибок
+      if (error?.code === 4001 || error?.message?.includes("user denied")) {
+        setErrorMessage("Transaction cancelled");
+        setModalState("error");
+        return;
+      }
+
+      if (error.message.includes("Relayer service error")) {
+        setErrorMessage("Insufficient balance to process transaction");
       } else if (error.message.includes("timeout")) {
-        setErrorMessage("Transaction timed out. Please try again.");
+        setErrorMessage("Transaction timed out. Please try again");
       } else {
-        setErrorMessage(`Transaction failed: ${error.message}`);
+        // Общие ошибки делаем более читабельными
+        const cleanErrorMessage = error.message
+          .replace(/\{[^}]+\}/, "") // Убираем JSON объекты
+          .replace(/MetaMask Tx Signature:|there-user-denied:/, "") // Убираем технические префиксы
+          .trim();
+
+        setErrorMessage(
+          cleanErrorMessage || "Transaction failed. Please try again"
+        );
       }
 
       setModalState("error");
@@ -227,8 +238,32 @@ const SendContract: React.FC<SendContractProps> = ({
 
           {modalState === "error" && (
             <div className={styles.modalContent}>
-              <p>{errorMessage || "ERROR"}</p>
-              <img src="/sad-sun.png" alt="Sun" className={styles.sadEmoji} />
+              <div className={styles.errorContainer}>
+                <img
+                  src="/sad-sun.png"
+                  alt="Error"
+                  className={styles.sadEmoji}
+                />
+                <h3 className={styles.errorTitle}>
+                  {errorMessage === "Transaction cancelled"
+                    ? "Transaction Cancelled"
+                    : "Transaction Failed"}
+                </h3>
+                <p className={styles.errorMessage}>
+                  {errorMessage === "Transaction cancelled"
+                    ? "You cancelled the transaction. Would you like to try again?"
+                    : errorMessage}
+                </p>
+              </div>
+              <button
+                className={styles.tryButton}
+                onClick={() => {
+                  setModalState(null);
+                  setErrorMessage(null);
+                }}
+              >
+                Try Again
+              </button>
             </div>
           )}
 
