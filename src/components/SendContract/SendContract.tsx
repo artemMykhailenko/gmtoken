@@ -33,7 +33,7 @@ const SendContract: React.FC<SendContractProps> = ({
     setWallet(walletAddress);
   }, [walletAddress]);
 
-  const isFormValid = wallet.trim() !== "" && username.trim() !== "";
+  const isFormValid = wallet.trim() !== "";
   const formatAddress = (address: string) => {
     if (!address || address === "Please connect wallet")
       return "Please connect wallet";
