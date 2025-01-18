@@ -99,29 +99,41 @@ const SendContract: React.FC<SendContractProps> = ({
       await connect();
       return;
     }
+
     localStorage.setItem("userUsername", username);
-    // Check network
-    //@ts-ignore
-    const provider = new ethers.BrowserProvider(window.ethereum);
-    const network = await provider.getNetwork();
-
-    if (network.chainId.toString() !== "84532") {
-      setIsWrongNetwork(true);
-      setErrorMessage("Please switch to Base Sepolia network");
-      setModalState("wrongNetwork");
-      return;
-    }
-
-    setModalState("loading");
 
     try {
+      // Check network
+      //@ts-ignore
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const network = await provider.getNetwork();
+
+      if (network.chainId.toString() !== "84532") {
+        setIsWrongNetwork(true);
+        setErrorMessage("Please switch to Base Sepolia network");
+        setModalState("wrongNetwork");
+        return;
+      }
+
+      setModalState("loading");
+
       await sendTransaction();
+      setModalState("success");
     } catch (error: any) {
+      console.error("Transaction error:", error);
+
       if (error?.code === 4001) {
         setErrorMessage("You cancelled the transaction. Please try again!");
+      } else if (error.message.includes("Relayer service error")) {
+        setErrorMessage(
+          "Transaction failed: Insufficient balance and relay service unavailable"
+        );
+      } else if (error.message.includes("timeout")) {
+        setErrorMessage("Transaction timed out. Please try again.");
       } else {
-        setErrorMessage(`Error sending transaction`);
+        setErrorMessage(`Transaction failed: ${error.message}`);
       }
+
       setModalState("error");
     }
   };
