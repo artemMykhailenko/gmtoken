@@ -28,7 +28,8 @@ export default function Home() {
   const [isTransactionSent, setIsTransactionSent] = useState(false);
   const [isEventReceived, setIsEventReceived] = useState(false);
   const [transactionError, setTransactionError] = useState("");
-  const { connectedWallet, connect, createAmbireWallet } = useWeb3();
+  const { connectedWallet, connect, createAmbireWallet, disconnect } =
+    useWeb3(); // Add disconnect from useWeb3
   const [transactionStatus, setTransactionStatus] = useState<
     "idle" | "pending" | "success" | "error"
   >("idle");
@@ -234,14 +235,22 @@ export default function Home() {
     setPreviousStep(currentStep);
     setCurrentStep(newStep);
   };
-  const handleBack = () => {
-    // Сброс состояний в зависимости от текущего шага
-    if (currentStep === 2) {
+  const handleBack = async () => {
+    if (currentStep === 3) {
+      await disconnect();
+      setCurrentStep(1); // изменено с 2 на 1, чтобы вернуться к экрану подключения кошелька
       setIsTransactionSent(false);
+      updateWalletInfo(""); // Clear wallet info in context
+    } else if (currentStep === 2) {
+      await disconnect();
+      setCurrentStep(1); // изменено с 2 на 1, чтобы вернуться к экрану подключения кошелька
+      setIsTransactionSent(false);
+      updateWalletInfo(""); // Clear wallet info in contex
     } else if (currentStep === 1) {
       setIsTwitterConnected(false);
       sessionStorage.removeItem("code");
       sessionStorage.removeItem("verifier");
+      setCurrentStep(0);
     }
   };
   useEffect(() => {

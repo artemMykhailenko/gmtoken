@@ -134,7 +134,7 @@ const SendContract: React.FC<SendContractProps> = ({
       <div className={styles.balloon}>
         <img src="/image/contract/ballon.webp" alt="Hot Air Balloon" />
       </div>
-      <p className={styles.title}>SEND TRANSACTIONS</p>
+      <p className={styles.title}>SEND TRANSACTION</p>
       <div className={styles.form}>
         <label className={styles.label}>ADRESS WALLET</label>
         <div className={styles.inputGroup}>

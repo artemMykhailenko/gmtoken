@@ -349,7 +349,10 @@
     left: -20%;
   }
 }
-@media (max-width: 480px) {
+@media (max-width: 400px) {
+  .progressContainer {
+    height: 60px;
+  }
   .stepContent {
     width: 100px;
     /* margin-left: -36px; */
@@ -359,6 +362,10 @@
     font-size: 10px;
   }
   .stepDescription {
+    display: none;
     font-size: 8px;
+  }
+  .stepIcon {
+    font-size: 10px;
   }
 }

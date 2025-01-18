@@ -98,7 +98,19 @@ export const useWeb3 = () => {
       console.error("Error creating Ambire Wallet:", error);
     }
   };
+  const disconnect = async () => {
+    if (!web3Onboard || !connectedWallet) return;
+  
+    try {
+      await web3Onboard.disconnectWallet({ label: connectedWallet.label }); // Правильный вызов
+      setConnectedWallet(null);
+      setConnectedChain(null);
+    } catch (error) {
+      console.error('Error disconnecting wallet:', error);
+    }
+  };
   return {
+    disconnect,
     web3Onboard,
     connectedWallet,
     connectedChain,

@@ -1,6 +1,7 @@
 export interface WalletState {
     accounts: Array<{ address: string }>;
     chains?: Array<Chain>;
+    label:any
   }
   
   export interface Chain {
