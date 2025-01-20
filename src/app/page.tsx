@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ethers, Contract } from "ethers";
 import { useWeb3 } from "@/src/hooks/useWeb3";
 import TwitterConnect from "@/src/components/TwitterConnect";
@@ -22,28 +21,47 @@ import ProgressNavigation from "../components/ProgressNavigation/ProgressNavigat
 export default function Home() {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
-  const [previousStep, setPreviousStep] = useState(0);
+
+  // Twitter
   const [isTwitterConnected, setIsTwitterConnected] = useState(false);
   const [isTwitterLoading, setIsTwitterLoading] = useState(true);
-  const [isTransactionSent, setIsTransactionSent] = useState(false);
-  const [isEventReceived, setIsEventReceived] = useState(false);
-  const [transactionError, setTransactionError] = useState("");
-  const { connectedWallet, connect, createAmbireWallet, disconnect } =
-    useWeb3(); // Add disconnect from useWeb3
+
+  // Transaction
   const [transactionStatus, setTransactionStatus] = useState<
     "idle" | "pending" | "success" | "error"
   >("idle");
   const [errorMessage, setErrorMessage] = useState<string>("");
+
+  // Wallet
+  const { connectedWallet, connect, createAmbireWallet, disconnect } =
+    useWeb3();
   const { updateWalletInfo } = useWallet();
 
+  // -----------------------------------------------------------
+  //                    HOOKS: WALLET / TWITTER
+  // -----------------------------------------------------------
+  useEffect(() => {
+    if (connectedWallet && currentStep === 0) {
+      setCurrentStep(1);
+    }
+  }, [connectedWallet, currentStep]);
+
+  // useEffect(() => {
+  //   if (isTwitterConnected && currentStep === 1) {
+  //     setCurrentStep(2);
+  //   }
+  // }, [isTwitterConnected, currentStep]);
+
+  // Когда кошелёк сменился — обновляем контекст
   useEffect(() => {
     if (connectedWallet?.accounts[0]?.address) {
       updateWalletInfo(connectedWallet.accounts[0].address);
     }
   }, [connectedWallet]);
+
+  // При первом рендере проверяем твиттер авторизацию
   useEffect(() => {
     const checkTwitterAuth = () => {
-      // Сначала проверяем URL параметры
       const params = new URLSearchParams(window.location.search);
       const authorizationCode = params.get("code");
 
@@ -52,30 +70,32 @@ export default function Home() {
         setIsTwitterConnected(true);
         sessionStorage.setItem("code", authorizationCode);
 
-        // Очищаем URL
+        // setCurrentStep(2);
+        // очищаем URL
         const newUrl = window.location.origin + window.location.pathname;
         window.history.replaceState({}, document.title, newUrl);
+        setCurrentStep(2);
+        if (connectedWallet) {
+          setCurrentStep(2);
+        }
       } else {
-        // Если нет кода в URL, проверяем sessionStorage
         const storedCode = sessionStorage.getItem("code");
-        console.log(
-          "Checking stored code:",
-          storedCode ? "exists" : "not found"
-        );
         if (storedCode) {
           setIsTwitterConnected(true);
         }
       }
-      setIsTwitterLoading(false); // Загрузка завершена
+      setIsTwitterLoading(false);
     };
-
     checkTwitterAuth();
   }, []);
 
+  // -----------------------------------------------------------
+  //                    HANDLERS
+  // -----------------------------------------------------------
   const openTwitterAuthPopup = async () => {
     if (typeof window === "undefined") return;
 
-    setIsTwitterLoading(true); // Начинаем загрузку
+    setIsTwitterLoading(true);
     const codeVerifier = generateCodeVerifier();
     sessionStorage.setItem("verifier", codeVerifier);
 
@@ -89,6 +109,8 @@ export default function Home() {
 
     window.location.href = twitterAuthUrl;
   };
+
+  // Основная отправка транзакции
   const sendTransaction = async (): Promise<void> => {
     if (!connectedWallet) {
       console.log("❌ Wallet is not connected. Connecting...");
@@ -110,17 +132,15 @@ export default function Home() {
       console.log("🚀 Sending transaction...");
 
       const browserProvider = new ethers.BrowserProvider(
-        //@ts-ignore
+        // @ts-ignore
         window.ethereum,
         84532
       );
-
       const signer = await browserProvider.getSigner();
       const contract = new Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
 
       const address = await signer.getAddress();
       const balance = await browserProvider.getBalance(address);
-
       console.log(`💰 User balance: ${ethers.formatEther(balance)} ETH`);
 
       const estimatedGas =
@@ -241,63 +261,51 @@ export default function Home() {
     }
   };
 
-  // useEffect(() => {
-  //   if (connectedWallet && !isTransactionSent) {
-  //     console.log("Wallet connected, attempting transaction...");
-  //     sendTransaction();
-  //   }
-  // }, [connectedWallet]);
-  useEffect(() => {
-    const handleTwitterCallback = () => {
-      const params = new URLSearchParams(window.location.search);
-      const authorizationCode = params.get("code");
-
-      if (authorizationCode) {
-        setIsTwitterConnected(true);
-        sessionStorage.setItem("code", authorizationCode);
-
-        // Clean URL parameters
-        const newUrl = window.location.origin + window.location.pathname;
-        window.history.replaceState({}, document.title, newUrl);
-      }
-    };
-
-    handleTwitterCallback();
-  }, []);
+  // -----------------------------------------------------------
+  //                   Навигация по шагам
+  // -----------------------------------------------------------
   const handleStepChange = (newStep: number) => {
-    setPreviousStep(currentStep);
     setCurrentStep(newStep);
   };
+
   const handleBack = async () => {
-    if (currentStep === 3) {
-      await disconnect();
-      setCurrentStep(1); // изменено с 2 на 1, чтобы вернуться к экрану подключения кошелька
-      setIsTransactionSent(false);
-      updateWalletInfo(""); // Clear wallet info in context
-    } else if (currentStep === 2) {
-      await disconnect();
-      setCurrentStep(1); // изменено с 2 на 1, чтобы вернуться к экрану подключения кошелька
-      setIsTransactionSent(false);
-      updateWalletInfo(""); // Clear wallet info in contex
+    // Логика «Назад» для каждого шага
+    if (currentStep === 2) {
+      // Возврат со SendContract -> к Twitter
+      setCurrentStep(1);
+      setTransactionStatus("idle");
+      sessionStorage.removeItem("code");
+      sessionStorage.removeItem("verifier");
+      setIsTwitterConnected(false);
     } else if (currentStep === 1) {
+      // Возврат с Twitter -> к Wallet
+      setCurrentStep(0);
+      // Если хотим сразу дисконнектить кошелёк
+      await disconnect();
+    } else if (currentStep === 0) {
+      // Возврат c первого шага (ConnectWallet) —
+      // у нас по сути стартовое состояние, так что
+      // можно сбросить твиттер-данные, если нужно
       setIsTwitterConnected(false);
       sessionStorage.removeItem("code");
       sessionStorage.removeItem("verifier");
-      setCurrentStep(0);
     }
   };
-  useEffect(() => {
-    if (isTwitterConnected && currentStep === 0) {
-      setCurrentStep(1);
-    }
-  }, [isTwitterConnected]);
 
-  // Update step when wallet is connected
-  useEffect(() => {
-    if (connectedWallet && currentStep === 1) {
-      setCurrentStep(2);
-    }
-  }, [connectedWallet]);
+  // -----------------------------------------------------------
+  //                      Рендер
+  // -----------------------------------------------------------
+  // Если идёт загрузка состояния Twitter:
+  if (isTwitterLoading) {
+    return (
+      <main className="min-h-screen bg-white flex items-center justify-center">
+        <div className={styles.loaderContainer}>
+          <SunLoader />
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-white">
       <ProgressNavigation
@@ -309,57 +317,45 @@ export default function Home() {
         <div className="p-4">Authorized!</div>
       ) : (
         <div>
-          {isTwitterLoading ? (
-            <div className="flex items-center justify-center min-h-screen">
-              <div className={styles.loaderContainer}>
-                <SunLoader />
-              </div>
-            </div>
-          ) : (
-            <>
-              {!isTwitterConnected && (
-                <TwitterConnect
-                  onConnectClick={openTwitterAuthPopup}
-                  isConnecting={false}
-                />
-              )}
+          {/* ЛОГИКА ПОКАЗА ФОРМЫ/ШАГА */}
+          {currentStep === 0 && (
+            <ConnectWallet
+              onConnect={connect}
+              createAmbireWallet={createAmbireWallet}
+            />
+          )}
 
-              {/* Остальной JSX остается без изменений */}
-              {isTwitterConnected && !connectedWallet && (
-                <ConnectWallet
-                  onConnect={connect}
-                  createAmbireWallet={createAmbireWallet}
-                />
-              )}
-              {isTwitterConnected && connectedWallet && !isTransactionSent && (
-                <SendContract
-                  connectedWallet={connectedWallet}
-                  walletAddress={connectedWallet.accounts[0]?.address || ""}
-                  sendTransaction={sendTransaction}
-                  connect={connect}
-                />
-              )}
+          {currentStep === 1 && connectedWallet && (
+            <TwitterConnect
+              onConnectClick={openTwitterAuthPopup}
+              isConnecting={false}
+            />
+          )}
 
-              {isTransactionSent && (
-                <div>
-                  {!isEventReceived && (
-                    <p className={styles.info}>
-                      Transaction sent! Waiting for result..
-                    </p>
-                  )}
-                  {isEventReceived && !transactionError && (
-                    <p className={styles.success}>
-                      You successfully connected Twitter! 🥳
-                    </p>
-                  )}
-                  {isEventReceived && transactionError && (
-                    <p className={styles.error}>
-                      Error during twitter verification: {transactionError}
-                    </p>
-                  )}
-                </div>
-              )}
-            </>
+          {isTwitterConnected && currentStep === 2 && (
+            <SendContract
+              connectedWallet={connectedWallet}
+              walletAddress={connectedWallet?.accounts[0]?.address || ""}
+              sendTransaction={sendTransaction}
+              connect={connect}
+            />
+          )}
+
+          {transactionStatus === "pending" && (
+            <p className={styles.info}>
+              Transaction sent! Waiting for result...
+            </p>
+          )}
+
+          {transactionStatus === "success" && (
+            <p className={styles.success}>
+              You successfully connected Twitter! 🥳
+            </p>
+          )}
+          {transactionStatus === "error" && (
+            <p className={styles.error}>
+              Error during twitter verification: {errorMessage}
+            </p>
           )}
         </div>
       )}

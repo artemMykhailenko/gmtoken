@@ -5,7 +5,8 @@ import ButtonBackground from "../buttons/BlueButton";
 import Modal from "../modal/Modal";
 import { AlertCircle, RefreshCw } from "lucide-react";
 import { ethers } from "ethers";
-
+import { generateCodeVerifier, generateCodeChallenge } from "@/src/utils/auth";
+import { TWITTER_CLIENT_ID } from "@/src/config";
 interface SendContractProps {
   connectedWallet: { accounts: { address: string }[] } | null;
   sendTransaction: () => Promise<void>;
@@ -20,6 +21,7 @@ const SendContract: React.FC<SendContractProps> = ({
   connect,
 }) => {
   const [wallet, setWallet] = useState(walletAddress);
+  const [walletAdd, setWalletAdd] = useState(walletAddress);
   const [username, setUsername] = useState("");
   const [showTooltip, setShowTooltip] = useState(false);
   const [modalState, setModalState] = useState<
@@ -27,13 +29,39 @@ const SendContract: React.FC<SendContractProps> = ({
   >(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
+  const [user, setUser] = useState(
+    () => sessionStorage.getItem("verifier") || ""
+  );
+  const [code, setCode] = useState(() => sessionStorage.getItem("code") || "");
+
   const router = useRouter();
-
   useEffect(() => {
-    setWallet(walletAddress);
+    if (walletAddress) {
+      setWallet(walletAddress);
+    }
   }, [walletAddress]);
-
-  const isFormValid = wallet.trim() !== "";
+  useEffect(() => {
+    const storedUser = sessionStorage.getItem("verifier");
+    const storedCode = sessionStorage.getItem("code");
+    if (storedUser && storedCode) {
+      setUser(storedUser);
+      setCode(storedCode);
+    }
+  }, []);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("walletAddress");
+      if (stored) {
+        setWalletAdd(stored); // <-- если что-то было сохранено, кладём в стейт
+      }
+    }
+  }, []);
+  useEffect(() => {
+    if (user) {
+      sessionStorage.setItem("verifier", user);
+    }
+  }, [user]);
+  const isFormValid = walletAdd.trim() !== "";
   const formatAddress = (address: string) => {
     if (!address || address === "Please connect wallet")
       return "Please connect wallet";
@@ -91,6 +119,51 @@ const SendContract: React.FC<SendContractProps> = ({
     }
   };
 
+  // const fetchTwitterAccessToken = async () => {
+  //   const url =
+  //     "https://ue63semz7f.execute-api.eu-central-1.amazonaws.com/dev/TwitterAccessToken";
+
+  //   // Проверяем, подключен ли кошелек
+  //   // if (!window.ethereum) {
+  //   //   console.error("❌ MetaMask is not installed!");
+  //   //   return;
+  //   // }
+
+  //   try {
+  //     // Создаем Web3-провайдера
+  //     // const provider = new ethers.BrowserProvider(window.ethereum);
+  //     // const signer = await provider.getSigner();
+
+  //     // // Подписываем сообщение для верификации
+  //     // const signature = await signer.signMessage(
+  //     //   "gmcoin.meme twitter-verification"
+  //     // );
+
+  //     const requestBody = {
+  //       authCode: code,
+  //       verifier: user,
+  //       redirectURL: "http://localhost:5173",
+  //       env: "testnet",
+  //       // signature, // ✅ Добавляем подпись
+  //     };
+
+  //     const response = await fetch(url, {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify(requestBody),
+  //     });
+
+  //     if (!response.ok) {
+  //       throw new Error(`HTTP error! Status: ${response.status}`);
+  //     }
+
+  //     const data = await response.json();
+  //     console.log("✅ Success:", data);
+  //   } catch (error) {
+  //     console.error("❌ Error fetching Twitter access token:", error);
+  //   }
+  // };
+
   const handleSendTransaction = async () => {
     if (!isFormValid) return;
 
@@ -100,10 +173,10 @@ const SendContract: React.FC<SendContractProps> = ({
       return;
     }
 
-    localStorage.setItem("userUsername", username);
+    // sessionStorage.setItem("verifier", username);
 
     try {
-      // Check network
+      // Проверяем сеть
       //@ts-ignore
       const provider = new ethers.BrowserProvider(window.ethereum);
       const network = await provider.getNetwork();
@@ -122,33 +195,55 @@ const SendContract: React.FC<SendContractProps> = ({
     } catch (error: any) {
       console.error("Transaction error:", error);
 
-      // Обработка специфических ошибок
+      // ✅ Проверяем, отменил ли пользователь транзакцию
       if (error?.code === 4001 || error?.message?.includes("user denied")) {
-        setErrorMessage("Transaction cancelled");
+        setErrorMessage("Transaction cancelled by user.");
         setModalState("error");
-        return;
+        return; // ❗ ВАЖНО: Выходим из функции, не продолжаем обработку
       }
 
-      if (error.message.includes("Relayer service error")) {
-        setErrorMessage("Insufficient balance to process transaction");
-      } else if (error.message.includes("timeout")) {
-        setErrorMessage("Transaction timed out. Please try again");
+      // ✅ Проверяем, недостаточно ли средств
+      if (
+        error?.message?.includes("insufficient funds") ||
+        error?.message?.includes("Relayer service error")
+      ) {
+        setErrorMessage("Insufficient balance to process transaction.");
+      } else if (error?.message?.includes("timeout")) {
+        setErrorMessage("Transaction timed out. Please try again.");
       } else {
-        // Общие ошибки делаем более читабельными
-        const cleanErrorMessage = error.message
-          .replace(/\{[^}]+\}/, "") // Убираем JSON объекты
-          .replace(/MetaMask Tx Signature:|there-user-denied:/, "") // Убираем технические префиксы
-          .trim();
-
-        setErrorMessage(
-          cleanErrorMessage || "Transaction failed. Please try again"
-        );
+        setErrorMessage("Transaction failed. Please try again.");
       }
 
       setModalState("error");
     }
   };
+  const reconnectTwitter = async () => {
+    try {
+      // Clear existing Twitter connection data
+      sessionStorage.removeItem("code");
+      sessionStorage.removeItem("verifier");
+      setUser("");
 
+      // Generate new code verifier
+      const codeVerifier = generateCodeVerifier();
+      sessionStorage.setItem("verifier", codeVerifier);
+
+      // Generate code challenge
+      const codeChallenge = await generateCodeChallenge(codeVerifier);
+
+      // Construct Twitter auth URL
+      const redirectUri = encodeURIComponent(
+        window.location.origin + window.location.pathname
+      );
+      const twitterAuthUrl = `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${TWITTER_CLIENT_ID}&redirect_uri=${redirectUri}&scope=users.read%20tweet.read%20follows.write&state=state123&code_challenge=${codeChallenge}&code_challenge_method=S256`;
+
+      // Redirect to Twitter auth
+      window.location.href = twitterAuthUrl;
+    } catch (error) {
+      setErrorMessage("Failed to reconnect Twitter");
+      setModalState("error");
+    }
+  };
   return (
     <div className={styles.container}>
       <div className={styles.rainbow}>
@@ -164,12 +259,26 @@ const SendContract: React.FC<SendContractProps> = ({
           <input
             type="text"
             placeholder="Enter Wallet..."
-            value={formatAddress(wallet)}
+            value={formatAddress(walletAdd) || formatAddress(wallet)}
             onChange={(e) => setWallet(e.target.value)}
             className={styles.input}
             readOnly={!!connectedWallet}
           />
           <button className={styles.reconnectButton} onClick={reconnectWallet}>
+            <RefreshCw size={20} className={styles.reconnectIcon} /> reconnect
+          </button>
+        </div>
+        <label className={styles.label}>NAME TWITTER</label>
+        <div className={styles.inputGroup}>
+          <input
+            type="text"
+            placeholder="Enter Wallet..."
+            value={formatAddress(user)}
+            onChange={(e) => setUser(e.target.value)}
+            className={styles.input}
+            readOnly={!!connectedWallet}
+          />
+          <button className={styles.reconnectButton} onClick={reconnectTwitter}>
             <RefreshCw size={20} className={styles.reconnectIcon} /> reconnect
           </button>
         </div>
@@ -188,7 +297,7 @@ const SendContract: React.FC<SendContractProps> = ({
               <ButtonBackground />
               <span className={styles.buttonText}>SEND</span>
             </button>
-
+            {/* <button onClick={fetchTwitterAccessToken}>Twit</button> */}
             {showTooltip && !isFormValid && (
               <div className={`${styles.tooltip} ${styles.tooltipVisible}`}>
                 <span className={styles.tooltipIcon}>
@@ -269,8 +378,50 @@ const SendContract: React.FC<SendContractProps> = ({
 
           {modalState === "success" && (
             <div className={styles.modalContent}>
-              <p>🎉 Transaction successful!</p>
+              <p>
+                🎉 Well done!
+                <br /> Now you’re in. You can go to Twitter and write “GM”.
+                You'll receive GM coins for every tweet with "GM" word.
+                <br /> Use hashtags and cashtags to get even more coins.
+              </p>
               <img src="/sun.png" alt="Sun" className={styles.goodEmoji} />
+              <a
+                className={styles.twittButton}
+                href="https://twitter.com/intent/tweet?text=Hello%20world"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <svg
+                  className={styles.icon}
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z" />
+                </svg>
+                Tweet
+              </a>
+              <a
+                className={styles.twittButton}
+                href="https://twitter.com/TwitterDev"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <svg
+                  className={styles.icon}
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13h-1v6l5.25 3.15.75-1.23-4.5-2.67V7z" />
+                </svg>
+                Follow @TwitterDev
+              </a>
+
               <button
                 className={styles.successButton}
                 onClick={() => router.push("/dashbord")}

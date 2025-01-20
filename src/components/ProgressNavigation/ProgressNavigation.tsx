@@ -17,15 +17,16 @@ const ProgressNavigation: React.FC<ProgressNavigationProps> = ({
 
   const steps = [
     {
-      title: "Connect X",
-      description: "Connect your Twitter account",
-      icon: "🔗",
-    },
-    {
       title: "Connect Wallet",
       description: "Link your crypto wallet",
       icon: "💳",
     },
+    {
+      title: "Connect X",
+      description: "Connect your Twitter account",
+      icon: "🔗",
+    },
+
     {
       title: "Send Transaction",
       description: "Complete verification",

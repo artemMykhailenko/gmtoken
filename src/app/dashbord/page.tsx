@@ -2,35 +2,87 @@
 import React, { useEffect, useState } from "react";
 import styles from "./dashboard.module.css";
 import { useWallet } from "@/src/context/WalletContext";
+import { useWeb3 } from "@/src/hooks/useWeb3";
+import { useRouter } from "next/navigation";
+import { ethers, Contract } from "ethers";
+
+// ✅ Адрес контракта токена
+const CONTRACT_ADDRESS = "0x05694e4A34e5f6f8504fC2b2cbe67Db523e0fCCb";
+
+// ✅ ABI для чтения баланса токена (ERC-20 `balanceOf`)
+const CONTRACT_ABI = [
+  "function balanceOf(address owner) view returns (uint256)",
+  "function decimals() view returns (uint8)",
+];
 
 const Dashboard = () => {
-  const { walletAddress, balance } = useWallet();
-  // const [username, setUsername] = useState("@username");
+  const { walletAddress } = useWallet();
+  const { disconnect: web3Disconnect } = useWeb3();
+  const { updateWalletInfo } = useWallet();
+  const router = useRouter();
 
-  // useEffect(() => {
-  //   // Get username from localStorage when component mounts
-  //   const storedUsername = localStorage.getItem("userUsername");
-  //   if (storedUsername) {
-  //     // Add @ if it doesn't exist at the start
-  //     const formattedUsername = storedUsername.startsWith("@")
-  //       ? storedUsername
-  //       : `@${storedUsername}`;
-  //     setUsername(formattedUsername);
-  //   }
-  // }, []);
+  const [username, setUsername] = useState("@username");
+  const [tokenBalance, setTokenBalance] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // ✅ Загружаем юзернейм из `localStorage`
+  useEffect(() => {
+    const storedUsername = localStorage.getItem("userUsername");
+    if (storedUsername) {
+      setUsername(
+        storedUsername.startsWith("@") ? storedUsername : `@${storedUsername}`
+      );
+    }
+  }, []);
+
+  // ✅ Функция загрузки баланса токена
+  const loadTokenBalance = async () => {
+    if (!walletAddress) return;
+    setIsLoading(true);
+
+    try {
+      //@ts-ignore
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const contract = new Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
+
+      // Получаем баланс токена
+      const rawBalance = await contract.balanceOf(walletAddress);
+      const decimals = await contract.decimals();
+
+      // Приводим баланс к нормальному виду
+      const formattedBalance = ethers.formatUnits(rawBalance, decimals);
+      setTokenBalance(formattedBalance);
+    } catch (error) {
+      console.error("Ошибка загрузки баланса токена:", error);
+      setTokenBalance("Error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // ✅ Загружаем баланс токена при загрузке страницы и при смене `walletAddress`
+  useEffect(() => {
+    if (walletAddress) {
+      loadTokenBalance();
+    }
+  }, [walletAddress]);
+
+  const handleDisconnect = async () => {
+    try {
+      await web3Disconnect();
+      updateWalletInfo("");
+      router.push("/");
+    } catch (error) {
+      console.error("Error disconnecting:", error);
+    }
+  };
+
   const formatAddress = (address: string) => {
     if (!address || address === "Please connect wallet")
       return "Please connect wallet";
     return `${address.slice(0, 10)}...${address.slice(-4)}`;
   };
-  const getUsernameFontClass = (username: string) => {
-    if (username.length > 20) {
-      return styles.smallFont;
-    } else if (username.length > 16) {
-      return styles.mediumFont;
-    }
-    return styles.normalFont;
-  };
+
   return (
     <div className={styles.container}>
       <div className={styles.infoContainer}>
@@ -38,11 +90,61 @@ const Dashboard = () => {
           <img src="/cosmoman.png" alt="Cosmoman" />
         </div>
 
-        {/* Облако с данными */}
         <div className={styles.cloude}>
-          {/* <p className={getUsernameFontClass(username)}>{username}</p> */}
-          <p>{formatAddress(walletAddress)}</p>
-          <p className={styles.balance}>{balance || "Loading..."}</p>
+          <p className={styles.username}>{username}</p>
+          <div className={styles.addressContainer}>
+            <p>{formatAddress(walletAddress)}</p>
+            <button
+              className={`${styles.iconButton} ${styles.disconnectButton}`}
+              onClick={handleDisconnect}
+            >
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M10 3H6a2 2 0 0 0-2 2v14c0 1.1.9 2 2 2h4" />
+                <path d="M18 8l4 4-4 4" />
+                <path d="M22 12H10" />
+              </svg>
+            </button>
+          </div>
+
+          {/* ✅ Вывод баланса токена */}
+          <div className={styles.balanceContainer}>
+            <p className={styles.balance}>
+              {isLoading
+                ? "Loading..."
+                : tokenBalance
+                ? `${tokenBalance} GM`
+                : "0 GM"}
+            </p>
+            <button
+              className={`${styles.iconButton} ${styles.refreshButton}`}
+              onClick={loadTokenBalance}
+            >
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M3 12a9 9 0 0 1 9-9 9 9 0 0 1 6.9 3.2L21 9" />
+                <path d="M21 3v6h-6" />
+                <path d="M21 12a9 9 0 0 1-9 9 9 9 0 0 1-6.9-3.2L3 15" />
+                <path d="M3 21v-6h6" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
 
