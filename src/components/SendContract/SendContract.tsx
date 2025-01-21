@@ -142,7 +142,11 @@ const SendContract: React.FC<SendContractProps> = ({
 
       const response = await fetch(url, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "https://gmtoken-three.vercel.app",
+        },
+        credentials: "include",
         body: JSON.stringify(requestBody),
       });
 
