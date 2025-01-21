@@ -144,8 +144,10 @@ const SendContract: React.FC<SendContractProps> = ({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Origin": "https://gmtoken-three.vercel.app",
+          // Убираем Origin header - браузер добавит его автоматически
         },
+        // Важно: не используем credentials: "include", если это не требуется явно
+        mode: 'cors', // Явно указываем режим CORS
         body: JSON.stringify(requestBody),
       });
 
