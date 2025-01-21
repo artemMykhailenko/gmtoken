@@ -127,48 +127,58 @@ const SendContract: React.FC<SendContractProps> = ({
   };
 
   const fetchTwitterAccessToken = async () => {
-    const url = TOKEN_URL;
-    if (!url) {
-      console.error(
-        "❌ TWITTER_ACCESS_TOKEN_URL is not defined in .env.local!"
-      );
-      return;
-    }
     try {
-      const requestBody = {
-        authCode: code,
-        verifier: user,
-      };
+        const url = 'https://ue63semz7f.execute-api.eu-central-1.amazonaws.com/testnet/TwitterAccessToken';
+        
+        // Log the request payload for debugging
+        console.log('Sending request with:', { code, user });
 
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "*/*",
-          "Accept-Encoding": "gzip, deflate, br, zstd",
-          "Accept-Language": "ru,en-US;q=0.9,en;q=0.8,uk;q=0.7",
-          "Cache-Control": "no-cache",
-          "Pragma": "no-cache",
-          "Referer": "https://gmtoken-three.vercel.app/",
-          "Sec-Fetch-Mode": "cors",
-          "Sec-Fetch-Site": "cross-site"
-        },
-        // Важно: не используем credentials: "include", если это не требуется явно
-        mode: 'cors', // Явно указываем режим CORS
-        body: JSON.stringify(requestBody),
-      });
+        const requestBody = {
+            authCode: code,
+            verifier: user
+        };
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': '*/*',
+                'Accept-Encoding': 'gzip, deflate, br, zstd',
+                'Accept-Language': 'ru,en-US;q=0.9,en;q=0.8,uk;q=0.7',
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache',
+                'Origin': 'https://gmtoken-three.vercel.app',
+                'Referer': 'https://gmtoken-three.vercel.app/',
+                'Sec-Fetch-Mode': 'cors',
+                'Sec-Fetch-Site': 'cross-site'
+            },
+            mode: 'cors',
+            body: JSON.stringify(requestBody)
+        });
 
-      const data = await response.json();
-      setTwitterName(data.username);
-      sessionStorage.setItem("twitterName", data.twitterName);
+        // Log response details for debugging
+        console.log('Response status:', response.status);
+        console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Error response:', errorText);
+            throw new Error(`HTTP error! Status: ${response.status}, Details: ${errorText}`);
+        }
+
+        const data = await response.json();
+        console.log('Success response:', data);
+
+        // Update state and storage
+        setTwitterName(data.username);
+        sessionStorage.setItem("twitterName", data.username);
+        
+        return data;
     } catch (error) {
-      console.error("❌ Error fetching Twitter access token:", error);
+        console.error("❌ Error details:", error);
+        throw error; // Re-throw to handle in the component
     }
-  };
+};
   useEffect(() => {
     fetchTwitterAccessToken();
   }, []);
