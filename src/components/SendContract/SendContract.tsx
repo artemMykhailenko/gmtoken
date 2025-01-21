@@ -138,22 +138,10 @@ const SendContract: React.FC<SendContractProps> = ({
             verifier: user
         };
 
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': '*/*',
-                'Accept-Encoding': 'gzip, deflate, br, zstd',
-                'Accept-Language': 'ru,en-US;q=0.9,en;q=0.8,uk;q=0.7',
-                'Cache-Control': 'no-cache',
-                'Pragma': 'no-cache',
-                'Origin': 'https://gmtoken-three.vercel.app',
-                'Referer': 'https://gmtoken-three.vercel.app/',
-                'Sec-Fetch-Mode': 'cors',
-                'Sec-Fetch-Site': 'cross-site'
-            },
-            mode: 'cors',
-            body: JSON.stringify(requestBody)
+        const response = await fetch("/api/proxyTwitter", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(requestBody),
         });
 
         // Log response details for debugging
