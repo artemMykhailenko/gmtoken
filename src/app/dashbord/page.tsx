@@ -62,7 +62,7 @@ const Dashboard = () => {
 
     try {
       //@ts-ignore
-      const provider = getProvider();
+      const provider = new ethers.BrowserProvider(window.ethereum);
       const contract = new Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
 
       // Получаем баланс токена
