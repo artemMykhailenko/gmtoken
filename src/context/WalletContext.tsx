@@ -120,28 +120,28 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
     await Promise.all([fetchBalance(address), fetchTwitterInfo(address)]);
   };
 
-  useEffect(() => {
-    if (typeof window !== "undefined" && window.ethereum) {
-      window.ethereum.on("accountsChanged", (accounts: unknown) => {
-        if (Array.isArray(accounts) && accounts.length > 0) {
-          updateWalletInfo(accounts[0]);
-        } else {
-          setWalletAddress("");
-          setBalance("");
-          setTwitterUsername("@username");
-          localStorage.removeItem("walletAddress");
-          localStorage.removeItem("walletBalance");
-          localStorage.removeItem("twitterUsername");
-        }
-      });
-    }
+  // useEffect(() => {
+  //   if (typeof window !== "undefined" && window.ethereum) {
+  //     window.ethereum.on("accountsChanged", (accounts: unknown) => {
+  //       if (Array.isArray(accounts) && accounts.length > 0) {
+  //         updateWalletInfo(accounts[0]);
+  //       } else {
+  //         setWalletAddress("");
+  //         setBalance("");
+  //         setTwitterUsername("@username");
+  //         localStorage.removeItem("walletAddress");
+  //         localStorage.removeItem("walletBalance");
+  //         localStorage.removeItem("twitterUsername");
+  //       }
+  //     });
+  //   }
 
-    return () => {
-      if (window.ethereum) {
-        window.ethereum.removeAllListeners("accountsChanged");
-      }
-    };
-  }, []);
+  //   return () => {
+  //     if (window.ethereum) {
+  //       window.ethereum.removeAllListeners("accountsChanged");
+  //     }
+  //   };
+  // }, []);
 
   return (
     <WalletContext.Provider

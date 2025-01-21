@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from 'react';
-import init from '@web3-onboard/core';
+// import init from '@web3-onboard/core';
+import { init, useSetChain } from "@web3-onboard/react";
+
 import injectedModule from '@web3-onboard/injected-wallets';
 import metamaskSDK from '@web3-onboard/metamask';
 import phantomModule from '@web3-onboard/phantom';
@@ -8,6 +10,7 @@ import { AmbireWalletModule } from '@ambire/login-sdk-web3-onboard';
 import { AmbireLoginSDK } from '@ambire/login-sdk-core'
 import type { WalletState, Chain } from '@/src/types';
 import { CHAINS } from '@/src/config';
+import { ethers } from 'ethers';
 
 export const useWeb3 = () => {
   const [web3Onboard, setWeb3Onboard] = useState<any>(null);
@@ -83,7 +86,17 @@ export const useWeb3 = () => {
 
     setWeb3Onboard(onboard);
   }, []);
+  const getProvider = () => {
+    if (!connectedWallet?.provider) {
+      throw new Error('No wallet connected');
+    }
+    return new ethers.BrowserProvider(connectedWallet.provider);
+  };
 
+  const getSigner = async () => {
+    const provider = getProvider();
+    return await provider.getSigner();
+  };
   const connect = async () => {
     if (!web3Onboard) return;
 
@@ -138,6 +151,8 @@ export const useWeb3 = () => {
     connectedWallet,
     connectedChain,
     connect,
-    createAmbireWallet
+    createAmbireWallet,
+    getProvider,
+    getSigner
   };
 };

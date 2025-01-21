@@ -33,8 +33,14 @@ export default function Home() {
   const [errorMessage, setErrorMessage] = useState<string>("");
 
   // Wallet
-  const { connectedWallet, connect, createAmbireWallet, disconnect } =
-    useWeb3();
+  const {
+    connectedWallet,
+    connect,
+    createAmbireWallet,
+    disconnect,
+    getSigner,
+    getProvider,
+  } = useWeb3();
   const { updateWalletInfo } = useWallet();
 
   // -----------------------------------------------------------
@@ -45,13 +51,6 @@ export default function Home() {
       setCurrentStep(1);
     }
   }, [connectedWallet, currentStep]);
-
-  // useEffect(() => {
-  //   if (isTwitterConnected && currentStep === 1) {
-  //     setCurrentStep(2);
-  //   }
-  // }, [isTwitterConnected, currentStep]);
-
   // Когда кошелёк сменился — обновляем контекст
   useEffect(() => {
     if (connectedWallet?.accounts[0]?.address) {
@@ -131,12 +130,8 @@ export default function Home() {
       setTransactionStatus("pending");
       console.log("🚀 Sending transaction...");
 
-      const browserProvider = new ethers.BrowserProvider(
-        // @ts-ignore
-        window.ethereum,
-        84532
-      );
-      const signer = await browserProvider.getSigner();
+      const browserProvider = getProvider();
+      const signer = await getSigner();
       const contract = new Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
 
       const address = await signer.getAddress();
@@ -261,41 +256,27 @@ export default function Home() {
     }
   };
 
-  // -----------------------------------------------------------
-  //                   Навигация по шагам
-  // -----------------------------------------------------------
   const handleStepChange = (newStep: number) => {
     setCurrentStep(newStep);
   };
 
   const handleBack = async () => {
-    // Логика «Назад» для каждого шага
     if (currentStep === 2) {
-      // Возврат со SendContract -> к Twitter
       setCurrentStep(1);
       setTransactionStatus("idle");
       sessionStorage.removeItem("code");
       sessionStorage.removeItem("verifier");
       setIsTwitterConnected(false);
     } else if (currentStep === 1) {
-      // Возврат с Twitter -> к Wallet
       setCurrentStep(0);
-      // Если хотим сразу дисконнектить кошелёк
       await disconnect();
     } else if (currentStep === 0) {
-      // Возврат c первого шага (ConnectWallet) —
-      // у нас по сути стартовое состояние, так что
-      // можно сбросить твиттер-данные, если нужно
       setIsTwitterConnected(false);
       sessionStorage.removeItem("code");
       sessionStorage.removeItem("verifier");
     }
   };
 
-  // -----------------------------------------------------------
-  //                      Рендер
-  // -----------------------------------------------------------
-  // Если идёт загрузка состояния Twitter:
   if (isTwitterLoading) {
     return (
       <main className="min-h-screen bg-white flex items-center justify-center">
@@ -317,7 +298,6 @@ export default function Home() {
         <div className="p-4">Authorized!</div>
       ) : (
         <div>
-          {/* ЛОГИКА ПОКАЗА ФОРМЫ/ШАГА */}
           {currentStep === 0 && (
             <ConnectWallet
               onConnect={connect}

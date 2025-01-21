@@ -4,9 +4,9 @@ import styles from "./SendContract.module.css";
 import ButtonBackground from "../buttons/BlueButton";
 import Modal from "../modal/Modal";
 import { AlertCircle, RefreshCw } from "lucide-react";
-import { ethers } from "ethers";
 import { generateCodeVerifier, generateCodeChallenge } from "@/src/utils/auth";
 import { TWITTER_CLIENT_ID } from "@/src/config";
+import { useWeb3 } from "@/src/hooks/useWeb3";
 interface SendContractProps {
   connectedWallet: { accounts: { address: string }[] } | null;
   sendTransaction: () => Promise<void>;
@@ -22,13 +22,16 @@ const SendContract: React.FC<SendContractProps> = ({
 }) => {
   const [wallet, setWallet] = useState(walletAddress);
   const [walletAdd, setWalletAdd] = useState(walletAddress);
-  const [username, setUsername] = useState("");
+  const { getProvider } = useWeb3();
   const [showTooltip, setShowTooltip] = useState(false);
   const [modalState, setModalState] = useState<
     "loading" | "error" | "success" | "wrongNetwork" | null
   >(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
+  const [twitterName, setTwitterName] = useState<string | null>(
+    sessionStorage.getItem("twitterName") || null
+  );
   const [user, setUser] = useState(
     () => sessionStorage.getItem("verifier") || ""
   );
@@ -71,6 +74,10 @@ const SendContract: React.FC<SendContractProps> = ({
     try {
       await connect();
       setModalState(null);
+      const stored = localStorage.getItem("walletAddress");
+      if (stored) {
+        setWalletAdd(stored); // <-- если что-то было сохранено, кладём в стейт
+      }
     } catch (error) {
       setErrorMessage("Failed to reconnect wallet");
       setModalState("error");
@@ -119,51 +126,60 @@ const SendContract: React.FC<SendContractProps> = ({
     }
   };
 
-  // const fetchTwitterAccessToken = async () => {
-  //   const url =
-  //     "https://ue63semz7f.execute-api.eu-central-1.amazonaws.com/dev/TwitterAccessToken";
+  const fetchTwitterAccessToken = async (
+    setTwitterName: (name: string) => void
+  ) => {
+    const url = process.env.NEXT_PUBLIC_TWITTER_ACCESS_TOKEN_URL;
 
-  //   // Проверяем, подключен ли кошелек
-  //   // if (!window.ethereum) {
-  //   //   console.error("❌ MetaMask is not installed!");
-  //   //   return;
-  //   // }
+    // Проверяем, подключен ли кошелек
+    // if (!window.ethereum) {
+    //   console.error("❌ MetaMask is not installed!");
+    //   return;
+    // }
+    if (!url) {
+      console.error(
+        "❌ TWITTER_ACCESS_TOKEN_URL is not defined in .env.local!"
+      );
+      return;
+    }
+    try {
+      // Создаем Web3-провайдера
+      // const provider = new ethers.BrowserProvider(window.ethereum);
+      // const signer = await provider.getSigner();
 
-  //   try {
-  //     // Создаем Web3-провайдера
-  //     // const provider = new ethers.BrowserProvider(window.ethereum);
-  //     // const signer = await provider.getSigner();
+      // // Подписываем сообщение для верификации
+      // const signature = await signer.signMessage(
+      //   "gmcoin.meme twitter-verification"
+      // );
 
-  //     // // Подписываем сообщение для верификации
-  //     // const signature = await signer.signMessage(
-  //     //   "gmcoin.meme twitter-verification"
-  //     // );
+      const requestBody = {
+        authCode: code,
+        verifier: user,
+        // redirectURL: "http://localhost:5173",
+        // env: "testnet",
+        // signature, // ✅ Добавляем подпись
+      };
 
-  //     const requestBody = {
-  //       authCode: code,
-  //       verifier: user,
-  //       redirectURL: "http://localhost:5173",
-  //       env: "testnet",
-  //       // signature, // ✅ Добавляем подпись
-  //     };
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestBody),
+      });
 
-  //     const response = await fetch(url, {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify(requestBody),
-  //     });
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
 
-  //     if (!response.ok) {
-  //       throw new Error(`HTTP error! Status: ${response.status}`);
-  //     }
-
-  //     const data = await response.json();
-  //     console.log("✅ Success:", data);
-  //   } catch (error) {
-  //     console.error("❌ Error fetching Twitter access token:", error);
-  //   }
-  // };
-
+      const data = await response.json();
+      setTwitterName(data.username);
+      sessionStorage.setItem("twitterName", data.twitterName);
+    } catch (error) {
+      console.error("❌ Error fetching Twitter access token:", error);
+    }
+  };
+  useEffect(() => {
+    fetchTwitterAccessToken(setTwitterName);
+  }, []);
   const handleSendTransaction = async () => {
     if (!isFormValid) return;
 
@@ -172,13 +188,9 @@ const SendContract: React.FC<SendContractProps> = ({
       await connect();
       return;
     }
-
-    // sessionStorage.setItem("verifier", username);
-
     try {
-      // Проверяем сеть
       //@ts-ignore
-      const provider = new ethers.BrowserProvider(window.ethereum);
+      const provider = getProvider();
       const network = await provider.getNetwork();
 
       if (network.chainId.toString() !== "84532") {
@@ -259,7 +271,7 @@ const SendContract: React.FC<SendContractProps> = ({
           <input
             type="text"
             placeholder="Enter Wallet..."
-            value={formatAddress(walletAdd) || formatAddress(wallet)}
+            value={formatAddress(walletAdd)}
             onChange={(e) => setWallet(e.target.value)}
             className={styles.input}
             readOnly={!!connectedWallet}
@@ -273,7 +285,7 @@ const SendContract: React.FC<SendContractProps> = ({
           <input
             type="text"
             placeholder="Enter Wallet..."
-            value={formatAddress(user)}
+            value={formatAddress(twitterName || user)}
             onChange={(e) => setUser(e.target.value)}
             className={styles.input}
             readOnly={!!connectedWallet}
@@ -297,7 +309,6 @@ const SendContract: React.FC<SendContractProps> = ({
               <ButtonBackground />
               <span className={styles.buttonText}>SEND</span>
             </button>
-            {/* <button onClick={fetchTwitterAccessToken}>Twit</button> */}
             {showTooltip && !isFormValid && (
               <div className={`${styles.tooltip} ${styles.tooltipVisible}`}>
                 <span className={styles.tooltipIcon}>

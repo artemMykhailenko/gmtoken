@@ -1,4 +1,5 @@
 export interface WalletState {
+    provider: any;
     accounts: Array<{ address: string }>;
     chains?: Array<Chain>;
     label:any
