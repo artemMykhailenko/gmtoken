@@ -16,7 +16,7 @@ const CONTRACT_ABI = [
 ];
 
 const Dashboard = () => {
-  const { walletAddress } = useWallet();
+  const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const { disconnect: web3Disconnect, getProvider } = useWeb3();
   const { updateWalletInfo } = useWallet();
   const router = useRouter();
@@ -38,6 +38,12 @@ const Dashboard = () => {
     }
     return "";
   });
+  useEffect(() => {
+    const storedAddress = localStorage.getItem("walletAddress");
+    if (storedAddress) {
+      setWalletAddress(storedAddress);
+    }
+  }, []);
   useEffect(() => {
     const storedUser = sessionStorage.getItem("verifier");
     const storedCode = sessionStorage.getItem("code");
@@ -111,7 +117,7 @@ const Dashboard = () => {
         <div className={styles.cloude}>
           <p className={styles.username}>{twitterName || username}</p>
           <div className={styles.addressContainer}>
-            <p>{formatAddress(walletAddress)}</p>
+            <p>{formatAddress(walletAddress || '')}</p>
             <button
               className={`${styles.iconButton} ${styles.disconnectButton}`}
               onClick={handleDisconnect}
