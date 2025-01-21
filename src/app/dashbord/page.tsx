@@ -20,9 +20,7 @@ const Dashboard = () => {
   const { disconnect: web3Disconnect, getProvider } = useWeb3();
   const { updateWalletInfo } = useWallet();
   const router = useRouter();
-  const [twitterName, setTwitterName] = useState<string | null>(
-    sessionStorage.getItem("twitterName") || null
-  );
+  const [twitterName, setTwitterName] = useState<string>("");
 
   const [username, setUsername] = useState("@username");
   const [tokenBalance, setTokenBalance] = useState<string | null>(null);
@@ -76,7 +74,7 @@ const Dashboard = () => {
 
       const data = await response.json();
       setTwitterName(data.username);
-      sessionStorage.setItem("twitterName", data.twitterName);
+      localStorage.setItem("twitterName", data.twitterName);
     } catch (error) {
       console.error("❌ Error fetching Twitter access token:", error);
     }
