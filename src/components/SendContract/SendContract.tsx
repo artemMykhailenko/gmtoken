@@ -144,10 +144,9 @@ const SendContract: React.FC<SendContractProps> = ({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          // Убираем Origin header - браузер добавит его автоматически
+          "Origin": "https://gmtoken-three.vercel.app",
         },
-        // Важно: не используем credentials: "include", если это не требуется явно
-        // mode: 'cors', // Явно указываем режим CORS
+        credentials: "include",
         body: JSON.stringify(requestBody),
       });
 
@@ -157,7 +156,7 @@ const SendContract: React.FC<SendContractProps> = ({
 
       const data = await response.json();
       setTwitterName(data.username);
-      sessionStorage.setItem("twitterName", data.twitterName);
+      localStorage.setItem("twitterName", data.username);
     } catch (error) {
       console.error("❌ Error fetching Twitter access token:", error);
     }

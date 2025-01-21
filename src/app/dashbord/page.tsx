@@ -55,42 +55,6 @@ const Dashboard = () => {
       );
     }
   }, []);
-  const fetchTwitterAccessToken = async (
-    setTwitterName: (name: string) => void
-  ) => {
-    const url = TOKEN_URL;
-    if (!url) {
-      console.error(
-        "❌ TWITTER_ACCESS_TOKEN_URL is not defined in .env.local!"
-      );
-      return;
-    }
-    try {
-      const requestBody = {
-        authCode: code,
-        verifier: user,
-      };
-
-      const response = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requestBody),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      setTwitterName(data.username);
-      localStorage.setItem("twitterName", data.twitterName);
-    } catch (error) {
-      console.error("❌ Error fetching Twitter access token:", error);
-    }
-  };
-  useEffect(() => {
-    fetchTwitterAccessToken(setTwitterName);
-  }, []);
   // ✅ Функция загрузки баланса токена
   const loadTokenBalance = async () => {
     if (!walletAddress) return;
