@@ -6,18 +6,19 @@ import { useWeb3 } from "@/src/hooks/useWeb3";
 import { useRouter } from "next/navigation";
 import { ethers, Contract } from "ethers";
 import { TOKEN_URL } from "@/src/config";
-// ✅ Адрес контракта токена
+
 const CONTRACT_ADDRESS = "0x05694e4A34e5f6f8504fC2b2cbe67Db523e0fCCb";
 
-// ✅ ABI для чтения баланса токена (ERC-20 `balanceOf`)
 const CONTRACT_ABI = [
-  "function balanceOf(address owner) view returns (uint256)",
-  "function decimals() view returns (uint8)",
+  "function requestTwitterVerification(string calldata authCode, string calldata verifier, bool autoFollow) public",
+  "event TwitterConnected(string indexed userID, address indexed wallet)",
+  "event TwitterConnectError(address indexed wallet, string errorMsg)",
+  "function userByWallet(address wallet) public view returns (string memory)",
 ];
 
 const Dashboard = () => {
   const { walletAddress } = useWallet();
-  const { disconnect: web3Disconnect, getProvider } = useWeb3();
+  const { disconnect: web3Disconnect, getProvider, getSigner } = useWeb3();
   const { updateWalletInfo } = useWallet();
   const router = useRouter();
   const [twitterName, setTwitterName] = useState<string>("");
@@ -62,15 +63,15 @@ const Dashboard = () => {
 
     try {
       //@ts-ignore
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const contract = new Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
-
-      // Получаем баланс токена
-      const rawBalance = await contract.balanceOf(walletAddress);
+      const browserProvider = getProvider();
+      const signer = await getSigner();
+      const contract = new Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
+      const address = await signer.getAddress();
+      const balance = await browserProvider.getBalance(address);
       const decimals = await contract.decimals();
 
       // Приводим баланс к нормальному виду
-      const formattedBalance = ethers.formatUnits(rawBalance, decimals);
+      const formattedBalance = ethers.formatUnits(balance, decimals);
       setTokenBalance(formattedBalance);
     } catch (error) {
       console.error("Ошибка загрузки баланса токена:", error);
