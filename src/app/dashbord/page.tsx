@@ -9,7 +9,7 @@ import { TOKEN_URL } from "@/src/config";
 
 const CONTRACT_ADDRESS = "0x05694e4A34e5f6f8504fC2b2cbe67Db523e0fCCb";
 
-export const CONTRACT_ABI = [
+const CONTRACT_ABI = [
   "function requestTwitterVerification(string calldata authCode, string calldata verifier, bool autoFollow) public",
   "event TwitterConnected(string indexed userID, address indexed wallet)",
   "event TwitterConnectError(address indexed wallet, string errorMsg)",
