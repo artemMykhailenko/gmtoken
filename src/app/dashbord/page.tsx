@@ -16,7 +16,7 @@ const CONTRACT_ABI = [
 ];
 
 const Dashboard = () => {
-  const [walletAddress, setWalletAddress] = useState<string | null>(null);
+  const [walletAddress, setWalletAddress] = useState<string>('');
   const { disconnect: web3Disconnect, getProvider } = useWeb3();
   const { updateWalletInfo } = useWallet();
   const router = useRouter();
