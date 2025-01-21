@@ -5,7 +5,6 @@ import { useWallet } from "@/src/context/WalletContext";
 import { useWeb3 } from "@/src/hooks/useWeb3";
 import { useRouter } from "next/navigation";
 import { ethers, Contract } from "ethers";
-
 // ✅ Адрес контракта токена
 const CONTRACT_ADDRESS = "0x05694e4A34e5f6f8504fC2b2cbe67Db523e0fCCb";
 
@@ -17,24 +16,73 @@ const CONTRACT_ABI = [
 
 const Dashboard = () => {
   const { walletAddress } = useWallet();
-  const { disconnect: web3Disconnect } = useWeb3();
+  const { disconnect: web3Disconnect, getProvider } = useWeb3();
   const { updateWalletInfo } = useWallet();
   const router = useRouter();
+  const [twitterName, setTwitterName] = useState<string | null>(
+    sessionStorage.getItem("twitterName") || null
+  );
 
   const [username, setUsername] = useState("@username");
   const [tokenBalance, setTokenBalance] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-
-  // ✅ Загружаем юзернейм из `localStorage`
+  const [user, setUser] = useState(
+    () => sessionStorage.getItem("verifier") || ""
+  );
+  const [code, setCode] = useState(() => sessionStorage.getItem("code") || "");
   useEffect(() => {
-    const storedUsername = localStorage.getItem("userUsername");
+    const storedUser = sessionStorage.getItem("verifier");
+    const storedCode = sessionStorage.getItem("code");
+    if (storedUser && storedCode) {
+      setUser(storedUser);
+      setCode(storedCode);
+    }
+  }, []);
+
+  useEffect(() => {
+    const storedUsername = localStorage.getItem("twitterName");
     if (storedUsername) {
-      setUsername(
+      setTwitterName(
         storedUsername.startsWith("@") ? storedUsername : `@${storedUsername}`
       );
     }
   }, []);
+  const fetchTwitterAccessToken = async (
+    setTwitterName: (name: string) => void
+  ) => {
+    const url = process.env.NEXT_PUBLIC_TWITTER_ACCESS_TOKEN_URL;
+    if (!url) {
+      console.error(
+        "❌ TWITTER_ACCESS_TOKEN_URL is not defined in .env.local!"
+      );
+      return;
+    }
+    try {
+      const requestBody = {
+        authCode: code,
+        verifier: user,
+      };
 
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setTwitterName(data.username);
+      sessionStorage.setItem("twitterName", data.twitterName);
+    } catch (error) {
+      console.error("❌ Error fetching Twitter access token:", error);
+    }
+  };
+  useEffect(() => {
+    fetchTwitterAccessToken(setTwitterName);
+  }, []);
   // ✅ Функция загрузки баланса токена
   const loadTokenBalance = async () => {
     if (!walletAddress) return;
@@ -42,7 +90,7 @@ const Dashboard = () => {
 
     try {
       //@ts-ignore
-      const provider = new ethers.BrowserProvider(window.ethereum);
+      const provider = getProvider();
       const contract = new Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
 
       // Получаем баланс токена
@@ -59,8 +107,6 @@ const Dashboard = () => {
       setIsLoading(false);
     }
   };
-
-  // ✅ Загружаем баланс токена при загрузке страницы и при смене `walletAddress`
   useEffect(() => {
     if (walletAddress) {
       loadTokenBalance();
@@ -91,7 +137,7 @@ const Dashboard = () => {
         </div>
 
         <div className={styles.cloude}>
-          <p className={styles.username}>{username}</p>
+          <p className={styles.username}>{twitterName || username}</p>
           <div className={styles.addressContainer}>
             <p>{formatAddress(walletAddress)}</p>
             <button
@@ -114,8 +160,6 @@ const Dashboard = () => {
               </svg>
             </button>
           </div>
-
-          {/* ✅ Вывод баланса токена */}
           <div className={styles.balanceContainer}>
             <p className={styles.balance}>
               {isLoading

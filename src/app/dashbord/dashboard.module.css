@@ -417,6 +417,14 @@
   .cloud1 img {
     width: 500px;
   }
+  .iconButton {
+    padding: 6px;
+  }
+
+  .iconButton svg {
+    width: 18px;
+    height: 18px;
+  }
   .cloud2 img {
     width: 400px;
   }
@@ -475,5 +483,14 @@
   }
   .cloude p:first-of-type {
     font-size: 20px;
+  }
+  .iconButton {
+    padding: 5px;
+    border-radius: 10px;
+  }
+
+  .iconButton svg {
+    width: 16px;
+    height: 16px;
   }
 }

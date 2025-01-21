@@ -27,7 +27,6 @@ const TwitterConnect: React.FC<TwitterConnectProps> = ({
 
   return (
     <div className={styles.container}>
-      {/* Blue wave with parallax effect */}
       <div
         className={styles.waveContainer}
         style={{
@@ -38,8 +37,6 @@ const TwitterConnect: React.FC<TwitterConnectProps> = ({
       >
         <img src={cloude.src} alt="" className={styles.waveImage} />
       </div>
-
-      {/* Animated plane with smooth movement */}
       <div
         className={styles.planeContainer}
         style={{
@@ -49,7 +46,6 @@ const TwitterConnect: React.FC<TwitterConnectProps> = ({
         <img src={plane.src} alt="" className={styles.planeImage} />
       </div>
 
-      {/* Floating clouds */}
       <div
         className={styles.cloudContainer}
         style={{
@@ -60,8 +56,6 @@ const TwitterConnect: React.FC<TwitterConnectProps> = ({
       >
         <img src={whcloude.src} alt="" className={styles.cloudImage} />
       </div>
-
-      {/* Flying birds */}
       <div
         className={styles.birdContainer}
         style={{
@@ -73,7 +67,6 @@ const TwitterConnect: React.FC<TwitterConnectProps> = ({
         <img src={bird.src} alt="" className={styles.birdImage} />
       </div>
       <span className={styles.title}>CONNECT YOUR TWITTER</span>
-      {/* Connect Button with enhanced effects */}
       <div className={styles.buttonContainer}>
         <button
           onClick={onConnectClick}

@@ -22,7 +22,7 @@ const SendContract: React.FC<SendContractProps> = ({
 }) => {
   const [wallet, setWallet] = useState(walletAddress);
   const [walletAdd, setWalletAdd] = useState(walletAddress);
-  const { getProvider } = useWeb3();
+  const { getProvider, disconnect } = useWeb3();
   const [showTooltip, setShowTooltip] = useState(false);
   const [modalState, setModalState] = useState<
     "loading" | "error" | "success" | "wrongNetwork" | null
@@ -36,8 +36,8 @@ const SendContract: React.FC<SendContractProps> = ({
     () => sessionStorage.getItem("verifier") || ""
   );
   const [code, setCode] = useState(() => sessionStorage.getItem("code") || "");
-
   const router = useRouter();
+
   useEffect(() => {
     if (walletAddress) {
       setWallet(walletAddress);
@@ -55,7 +55,7 @@ const SendContract: React.FC<SendContractProps> = ({
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem("walletAddress");
       if (stored) {
-        setWalletAdd(stored); // <-- если что-то было сохранено, кладём в стейт
+        setWalletAdd(stored);
       }
     }
   }, []);
@@ -72,11 +72,12 @@ const SendContract: React.FC<SendContractProps> = ({
   };
   const reconnectWallet = async () => {
     try {
+      await disconnect();
       await connect();
       setModalState(null);
       const stored = localStorage.getItem("walletAddress");
       if (stored) {
-        setWalletAdd(stored); // <-- если что-то было сохранено, кладём в стейт
+        setWalletAdd(stored);
       }
     } catch (error) {
       setErrorMessage("Failed to reconnect wallet");
@@ -88,12 +89,11 @@ const SendContract: React.FC<SendContractProps> = ({
       //@ts-ignore
       await window.ethereum.request({
         method: "wallet_switchEthereumChain",
-        params: [{ chainId: "0x14a34" }], // 84532 in hex
+        params: [{ chainId: "0x14a34" }],
       });
       setIsWrongNetwork(false);
       setModalState(null);
     } catch (switchError: any) {
-      // This error code means the chain hasn't been added to MetaMask
       if (switchError.code === 4902) {
         try {
           //@ts-ignore
@@ -130,12 +130,6 @@ const SendContract: React.FC<SendContractProps> = ({
     setTwitterName: (name: string) => void
   ) => {
     const url = process.env.NEXT_PUBLIC_TWITTER_ACCESS_TOKEN_URL;
-
-    // Проверяем, подключен ли кошелек
-    // if (!window.ethereum) {
-    //   console.error("❌ MetaMask is not installed!");
-    //   return;
-    // }
     if (!url) {
       console.error(
         "❌ TWITTER_ACCESS_TOKEN_URL is not defined in .env.local!"
@@ -143,21 +137,9 @@ const SendContract: React.FC<SendContractProps> = ({
       return;
     }
     try {
-      // Создаем Web3-провайдера
-      // const provider = new ethers.BrowserProvider(window.ethereum);
-      // const signer = await provider.getSigner();
-
-      // // Подписываем сообщение для верификации
-      // const signature = await signer.signMessage(
-      //   "gmcoin.meme twitter-verification"
-      // );
-
       const requestBody = {
         authCode: code,
         verifier: user,
-        // redirectURL: "http://localhost:5173",
-        // env: "testnet",
-        // signature, // ✅ Добавляем подпись
       };
 
       const response = await fetch(url, {
@@ -207,14 +189,12 @@ const SendContract: React.FC<SendContractProps> = ({
     } catch (error: any) {
       console.error("Transaction error:", error);
 
-      // ✅ Проверяем, отменил ли пользователь транзакцию
       if (error?.code === 4001 || error?.message?.includes("user denied")) {
         setErrorMessage("Transaction cancelled by user.");
         setModalState("error");
-        return; // ❗ ВАЖНО: Выходим из функции, не продолжаем обработку
+        return;
       }
 
-      // ✅ Проверяем, недостаточно ли средств
       if (
         error?.message?.includes("insufficient funds") ||
         error?.message?.includes("Relayer service error")
@@ -231,25 +211,20 @@ const SendContract: React.FC<SendContractProps> = ({
   };
   const reconnectTwitter = async () => {
     try {
-      // Clear existing Twitter connection data
       sessionStorage.removeItem("code");
       sessionStorage.removeItem("verifier");
       setUser("");
 
-      // Generate new code verifier
       const codeVerifier = generateCodeVerifier();
       sessionStorage.setItem("verifier", codeVerifier);
 
-      // Generate code challenge
       const codeChallenge = await generateCodeChallenge(codeVerifier);
 
-      // Construct Twitter auth URL
       const redirectUri = encodeURIComponent(
         window.location.origin + window.location.pathname
       );
       const twitterAuthUrl = `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${TWITTER_CLIENT_ID}&redirect_uri=${redirectUri}&scope=users.read%20tweet.read%20follows.write&state=state123&code_challenge=${codeChallenge}&code_challenge_method=S256`;
 
-      // Redirect to Twitter auth
       window.location.href = twitterAuthUrl;
     } catch (error) {
       setErrorMessage("Failed to reconnect Twitter");

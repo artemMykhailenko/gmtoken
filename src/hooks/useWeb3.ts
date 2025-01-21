@@ -124,10 +124,9 @@ export const useWeb3 = () => {
     try {
       const ambireLoginSDK = new AmbireLoginSDK({
         dappName: "GM",
-        // dappIconPath: '', // Укажите путь к значку dApp (если нужно)
+        dappIconPath: 'https://pbs.twimg.com/profile_images/1834344421984256000/AcWFYzUl_400x400.jpg',
       });
 
-      // Открыть модальное окно для входа или создания аккаунта
       ambireLoginSDK.openLogin();
       console.log("Ambire Wallet created successfully!");
     } catch (error) {
@@ -138,7 +137,7 @@ export const useWeb3 = () => {
     if (!web3Onboard || !connectedWallet) return;
   
     try {
-      await web3Onboard.disconnectWallet({ label: connectedWallet.label }); // Правильный вызов
+      await web3Onboard.disconnectWallet({ label: connectedWallet.label });
       setConnectedWallet(null);
       setConnectedChain(null);
     } catch (error) {

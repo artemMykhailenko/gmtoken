@@ -14,7 +14,6 @@ const Modal: React.FC<ModalProps> = ({
   onClose,
   variant = "default",
 }) => {
-  // Disable body scroll when modal is open
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => {
@@ -28,7 +27,6 @@ const Modal: React.FC<ModalProps> = ({
         className={`${styles.modal} ${styles[variant]}`}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Decorative sun element */}
         <div className={styles.sunContainer}>
           <div className={styles.sun}>
             <div className={styles.sunFace}>
@@ -39,16 +37,13 @@ const Modal: React.FC<ModalProps> = ({
           <div className={styles.greeting}>GM!</div>
         </div>
 
-        {/* Close button */}
         <button className={styles.closeButton} onClick={onClose}>
           <span className={styles.closeText}>close</span>
           <div className={styles.closeIcon}></div>
         </button>
 
-        {/* Modal content */}
         <div className={styles.content}>{children}</div>
 
-        {/* Decorative sparkles */}
         <div className={styles.sparkles}>
           {[...Array(12)].map((_, i) => (
             <div
