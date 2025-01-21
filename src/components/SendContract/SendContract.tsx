@@ -144,7 +144,14 @@ const SendContract: React.FC<SendContractProps> = ({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          // Убираем Origin header - браузер добавит его автоматически
+          "Accept": "*/*",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Accept-Language": "ru,en-US;q=0.9,en;q=0.8,uk;q=0.7",
+          "Cache-Control": "no-cache",
+          "Pragma": "no-cache",
+          "Referer": "https://gmtoken-three.vercel.app/",
+          "Sec-Fetch-Mode": "cors",
+          "Sec-Fetch-Site": "cross-site"
         },
         // Важно: не используем credentials: "include", если это не требуется явно
         mode: 'cors', // Явно указываем режим CORS
