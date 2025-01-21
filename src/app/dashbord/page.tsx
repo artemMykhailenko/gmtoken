@@ -9,15 +9,17 @@ import { TOKEN_URL } from "@/src/config";
 
 const CONTRACT_ADDRESS = "0x05694e4A34e5f6f8504fC2b2cbe67Db523e0fCCb";
 
-const CONTRACT_ABI = [
+export const CONTRACT_ABI = [
   "function requestTwitterVerification(string calldata authCode, string calldata verifier, bool autoFollow) public",
   "event TwitterConnected(string indexed userID, address indexed wallet)",
   "event TwitterConnectError(address indexed wallet, string errorMsg)",
   "function userByWallet(address wallet) public view returns (string memory)",
+  "function balanceOf(address owner) view returns (uint256)",
+  "function decimals() view returns (uint8)",
 ];
 
 const Dashboard = () => {
-  const { walletAddress } = useWallet();
+  // const { walletAddress } = useWallet();
   const { disconnect: web3Disconnect, getProvider, getSigner } = useWeb3();
   const { updateWalletInfo } = useWallet();
   const router = useRouter();
@@ -39,6 +41,14 @@ const Dashboard = () => {
     }
     return "";
   });
+  const [walletAddress, setWalletAddress] = useState<string | null>(null);
+
+  useEffect(() => {
+    const storedAddress = localStorage.getItem("walletAddress");
+    if (storedAddress) {
+      setWalletAddress(storedAddress);
+    }
+  }, []);
   useEffect(() => {
     const storedUser = sessionStorage.getItem("verifier");
     const storedCode = sessionStorage.getItem("code");
@@ -58,20 +68,28 @@ const Dashboard = () => {
   }, []);
   // ✅ Функция загрузки баланса токена
   const loadTokenBalance = async () => {
-    if (!walletAddress) return;
+    if (!walletAddress) {
+      console.error("Wallet address not found");
+      return;
+    }
     setIsLoading(true);
 
     try {
-      //@ts-ignore
-      const browserProvider = getProvider();
+      const provider = getProvider();
       const signer = await getSigner();
       const contract = new Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
-      const address = await signer.getAddress();
-      const balance = await browserProvider.getBalance(address);
-      const decimals = await contract.decimals();
 
-      // Приводим баланс к нормальному виду
-      const formattedBalance = ethers.formatUnits(balance, decimals);
+      const rawBalance = await contract.balanceOf(walletAddress);
+      console.log("Raw balance:", rawBalance);
+
+      let decimals = 18; // Предположим 18 decimals по умолчанию
+      if (typeof contract.decimals === "function") {
+        decimals = await contract.decimals();
+      } else {
+        console.warn("Decimals method not supported, defaulting to 18");
+      }
+
+      const formattedBalance = ethers.formatUnits(rawBalance, decimals);
       setTokenBalance(formattedBalance);
     } catch (error) {
       console.error("Ошибка загрузки баланса токена:", error);
@@ -80,6 +98,7 @@ const Dashboard = () => {
       setIsLoading(false);
     }
   };
+
   useEffect(() => {
     if (walletAddress) {
       loadTokenBalance();
@@ -112,7 +131,7 @@ const Dashboard = () => {
         <div className={styles.cloude}>
           <p className={styles.username}>{twitterName || username}</p>
           <div className={styles.addressContainer}>
-            <p>{formatAddress(walletAddress)}</p>
+            <p>{formatAddress(walletAddress!)}</p>
             <button
               className={`${styles.iconButton} ${styles.disconnectButton}`}
               onClick={handleDisconnect}
