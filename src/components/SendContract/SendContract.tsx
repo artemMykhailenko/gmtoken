@@ -144,9 +144,7 @@ const SendContract: React.FC<SendContractProps> = ({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Origin": "https://gmtoken-three.vercel.app",
         },
-        credentials: "include",
         body: JSON.stringify(requestBody),
       });
 
