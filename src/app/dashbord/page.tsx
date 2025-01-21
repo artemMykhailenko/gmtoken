@@ -25,10 +25,19 @@ const Dashboard = () => {
   const [username, setUsername] = useState("@username");
   const [tokenBalance, setTokenBalance] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [user, setUser] = useState(
-    () => sessionStorage.getItem("verifier") || ""
-  );
-  const [code, setCode] = useState(() => sessionStorage.getItem("code") || "");
+  const [user, setUser] = useState(() => {
+    if (typeof window !== "undefined") {
+      return sessionStorage.getItem("verifier") || "";
+    }
+    return "";
+  });
+
+  const [code, setCode] = useState(() => {
+    if (typeof window !== "undefined") {
+      return sessionStorage.getItem("code") || "";
+    }
+    return "";
+  });
   useEffect(() => {
     const storedUser = sessionStorage.getItem("verifier");
     const storedCode = sessionStorage.getItem("code");
