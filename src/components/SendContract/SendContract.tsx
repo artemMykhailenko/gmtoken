@@ -5,7 +5,7 @@ import ButtonBackground from "../buttons/BlueButton";
 import Modal from "../modal/Modal";
 import { AlertCircle, RefreshCw } from "lucide-react";
 import { generateCodeVerifier, generateCodeChallenge } from "@/src/utils/auth";
-import { TWITTER_CLIENT_ID } from "@/src/config";
+import { TOKEN_URL, TWITTER_CLIENT_ID } from "@/src/config";
 import { useWeb3 } from "@/src/hooks/useWeb3";
 interface SendContractProps {
   connectedWallet: { accounts: { address: string }[] } | null;
@@ -126,10 +126,8 @@ const SendContract: React.FC<SendContractProps> = ({
     }
   };
 
-  const fetchTwitterAccessToken = async (
-    setTwitterName: (name: string) => void
-  ) => {
-    const url = process.env.NEXT_PUBLIC_TWITTER_ACCESS_TOKEN_URL;
+  const fetchTwitterAccessToken = async () => {
+    const url = TOKEN_URL;
     if (!url) {
       console.error(
         "❌ TWITTER_ACCESS_TOKEN_URL is not defined in .env.local!"
@@ -160,7 +158,7 @@ const SendContract: React.FC<SendContractProps> = ({
     }
   };
   useEffect(() => {
-    fetchTwitterAccessToken(setTwitterName);
+    fetchTwitterAccessToken();
   }, []);
   const handleSendTransaction = async () => {
     if (!isFormValid) return;

@@ -5,6 +5,7 @@ import { useWallet } from "@/src/context/WalletContext";
 import { useWeb3 } from "@/src/hooks/useWeb3";
 import { useRouter } from "next/navigation";
 import { ethers, Contract } from "ethers";
+import { TOKEN_URL } from "@/src/config";
 // ✅ Адрес контракта токена
 const CONTRACT_ADDRESS = "0x05694e4A34e5f6f8504fC2b2cbe67Db523e0fCCb";
 
@@ -50,7 +51,7 @@ const Dashboard = () => {
   const fetchTwitterAccessToken = async (
     setTwitterName: (name: string) => void
   ) => {
-    const url = process.env.NEXT_PUBLIC_TWITTER_ACCESS_TOKEN_URL;
+    const url = TOKEN_URL;
     if (!url) {
       console.error(
         "❌ TWITTER_ACCESS_TOKEN_URL is not defined in .env.local!"
