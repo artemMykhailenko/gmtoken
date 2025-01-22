@@ -30,7 +30,7 @@ const SendContract: React.FC<SendContractProps> = ({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
   const [twitterName, setTwitterName] = useState<string | null>(
-    sessionStorage.getItem("twitterName") || null
+    localStorage.getItem("twitterName") || null
   );
   const [user, setUser] = useState(
     () => sessionStorage.getItem("verifier") || ""
@@ -46,9 +46,11 @@ const SendContract: React.FC<SendContractProps> = ({
   useEffect(() => {
     const storedUser = sessionStorage.getItem("verifier");
     const storedCode = sessionStorage.getItem("code");
+    const storedUsername = localStorage.getItem("twitterName");
     if (storedUser && storedCode) {
       setUser(storedUser);
       setCode(storedCode);
+      setTwitterName(storedUsername);
     }
   }, []);
   useEffect(() => {
@@ -69,6 +71,15 @@ const SendContract: React.FC<SendContractProps> = ({
     if (!address || address === "Please connect wallet")
       return "Please connect wallet";
     return `${address.slice(0, 8)}...${address.slice(-4)}`;
+  };
+  const formatTwitter = (twitterName: string | null) => {
+    if (!twitterName) return "Connect ...";
+
+    if (twitterName.length > 15) {
+      return `${twitterName.slice(0, 12)}...`;
+    }
+
+    return twitterName;
   };
   const reconnectWallet = async () => {
     try {
@@ -260,7 +271,7 @@ const SendContract: React.FC<SendContractProps> = ({
           <input
             type="text"
             placeholder="Enter Wallet..."
-            value={formatAddress(twitterName || user)}
+            value={formatTwitter(twitterName)}
             onChange={(e) => setUser(e.target.value)}
             className={styles.input}
             readOnly={!!connectedWallet}
