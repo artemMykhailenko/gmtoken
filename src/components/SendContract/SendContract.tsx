@@ -75,8 +75,8 @@ const SendContract: React.FC<SendContractProps> = ({
   const formatTwitter = (twitterName: string | null) => {
     if (!twitterName) return "Connect ...";
 
-    if (twitterName.length > 15) {
-      return `${twitterName.slice(0, 12)}...`;
+    if (twitterName.length > 18) {
+      return `${twitterName.slice(0, 16)}...`;
     }
 
     return twitterName;
