@@ -93,7 +93,7 @@ const Dashboard = () => {
       setTokenBalance(formattedBalance);
     } catch (error) {
       console.error("Ошибка загрузки баланса токена:", error);
-      setTokenBalance("Error");
+      setTokenBalance("0.00");
     } finally {
       setIsLoading(false);
     }
