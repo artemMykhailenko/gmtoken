@@ -301,23 +301,6 @@ export default function Home() {
               connect={connect}
             />
           )}
-
-          {transactionStatus === "pending" && (
-            <p className={styles.info}>
-              Transaction sent! Waiting for result...
-            </p>
-          )}
-
-          {transactionStatus === "success" && (
-            <p className={styles.success}>
-              You successfully connected Twitter! 🥳
-            </p>
-          )}
-          {transactionStatus === "error" && (
-            <p className={styles.error}>
-              Error during twitter verification: {errorMessage}
-            </p>
-          )}
         </div>
       )}
     </main>

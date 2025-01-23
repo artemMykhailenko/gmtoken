@@ -5,9 +5,7 @@ import { useWallet } from "@/src/context/WalletContext";
 import { useWeb3 } from "@/src/hooks/useWeb3";
 import { useRouter } from "next/navigation";
 import { ethers, Contract } from "ethers";
-import { TOKEN_URL } from "@/src/config";
-
-const CONTRACT_ADDRESS = "0x05694e4A34e5f6f8504fC2b2cbe67Db523e0fCCb";
+import { CONTRACT_ADDRESS } from "@/src/config";
 
 const CONTRACT_ABI = [
   "function requestTwitterVerification(string calldata authCode, string calldata verifier, bool autoFollow) public",
@@ -19,7 +17,7 @@ const CONTRACT_ABI = [
 ];
 
 const Dashboard = () => {
-  const { disconnect: web3Disconnect, getProvider, getSigner } = useWeb3();
+  const { disconnect: web3Disconnect, getSigner } = useWeb3();
   const { updateWalletInfo } = useWallet();
   const router = useRouter();
   const [twitterName, setTwitterName] = useState<string>("");
@@ -73,7 +71,6 @@ const Dashboard = () => {
     setIsLoading(true);
 
     try {
-      const provider = getProvider();
       const signer = await getSigner();
       const contract = new Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
 
