@@ -19,12 +19,10 @@ const CONTRACT_ABI = [
 ];
 
 const Dashboard = () => {
-  // const { walletAddress } = useWallet();
   const { disconnect: web3Disconnect, getProvider, getSigner } = useWeb3();
   const { updateWalletInfo } = useWallet();
   const router = useRouter();
   const [twitterName, setTwitterName] = useState<string>("");
-
   const [username, setUsername] = useState("@username");
   const [tokenBalance, setTokenBalance] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -82,7 +80,7 @@ const Dashboard = () => {
       const rawBalance = await contract.balanceOf(walletAddress);
       console.log("Raw balance:", rawBalance);
 
-      let decimals = 18; // Предположим 18 decimals по умолчанию
+      let decimals = 18;
       if (typeof contract.decimals === "function") {
         decimals = await contract.decimals();
       } else {

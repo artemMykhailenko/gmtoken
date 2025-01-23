@@ -21,18 +21,12 @@ import ProgressNavigation from "../components/ProgressNavigation/ProgressNavigat
 export default function Home() {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
-
-  // Twitter
   const [isTwitterConnected, setIsTwitterConnected] = useState(false);
   const [isTwitterLoading, setIsTwitterLoading] = useState(true);
-
-  // Transaction
   const [transactionStatus, setTransactionStatus] = useState<
     "idle" | "pending" | "success" | "error"
   >("idle");
   const [errorMessage, setErrorMessage] = useState<string>("");
-
-  // Wallet
   const {
     connectedWallet,
     connect,
@@ -43,9 +37,6 @@ export default function Home() {
   } = useWeb3();
   const { updateWalletInfo } = useWallet();
 
-  // -----------------------------------------------------------
-  //                    HOOKS: WALLET / TWITTER
-  // -----------------------------------------------------------
   useEffect(() => {
     if (connectedWallet && currentStep === 0) {
       setCurrentStep(1);
@@ -67,9 +58,6 @@ export default function Home() {
         console.log("Found authorization code in URL");
         setIsTwitterConnected(true);
         sessionStorage.setItem("code", authorizationCode);
-
-        // setCurrentStep(2);
-
         const newUrl = window.location.origin + window.location.pathname;
         window.history.replaceState({}, document.title, newUrl);
         setCurrentStep(2);
@@ -87,9 +75,6 @@ export default function Home() {
     checkTwitterAuth();
   }, []);
 
-  // -----------------------------------------------------------
-  //                    HANDLERS
-  // -----------------------------------------------------------
   const openTwitterAuthPopup = async () => {
     if (typeof window === "undefined") return;
 
@@ -186,8 +171,6 @@ export default function Home() {
           throw new Error(`Relayer service error: ${apiError.message}`);
         }
       }
-
-      // Event listening
       const eventPromise = new Promise((resolve, reject) => {
         const infuraProvider = new ethers.WebSocketProvider(
           "wss://base-sepolia.infura.io/ws/v3/46c83ef6f9834cc49b76640eededc9f5"
