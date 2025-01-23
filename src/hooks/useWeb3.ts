@@ -18,23 +18,20 @@ export const useWeb3 = () => {
   const [connectedChain, setConnectedChain] = useState<Chain | null>(null);
   useEffect(() => {
     if (!web3Onboard) return;
-  
-    // Подписываемся на массив wallets в стейте
+ 
     const walletsSub = web3Onboard.state.select('wallets').subscribe((wallets:any) => {
       if (wallets && wallets.length > 0) {
         setConnectedWallet(wallets[0]);
-        // при желании сохраним chains[0], если нужно
         if (wallets[0].chains && wallets[0].chains.length > 0) {
           setConnectedChain(wallets[0].chains[0]);
         }
       } else {
-        // если wallets пуст, сбрасываем стейт
+  
         setConnectedWallet(null);
         setConnectedChain(null);
       }
     });
-  
-    // Отписка при размонтировании
+
     return () => {
       walletsSub.unsubscribe();
     };

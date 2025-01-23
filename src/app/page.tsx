@@ -51,14 +51,13 @@ export default function Home() {
       setCurrentStep(1);
     }
   }, [connectedWallet, currentStep]);
-  // Когда кошелёк сменился — обновляем контекст
+
   useEffect(() => {
     if (connectedWallet?.accounts[0]?.address) {
       updateWalletInfo(connectedWallet.accounts[0].address);
     }
   }, [connectedWallet]);
 
-  // При первом рендере проверяем твиттер авторизацию
   useEffect(() => {
     const checkTwitterAuth = () => {
       const params = new URLSearchParams(window.location.search);
@@ -70,7 +69,7 @@ export default function Home() {
         sessionStorage.setItem("code", authorizationCode);
 
         // setCurrentStep(2);
-        // очищаем URL
+
         const newUrl = window.location.origin + window.location.pathname;
         window.history.replaceState({}, document.title, newUrl);
         setCurrentStep(2);
@@ -109,7 +108,6 @@ export default function Home() {
     window.location.href = twitterAuthUrl;
   };
 
-  // Основная отправка транзакции
   const sendTransaction = async (): Promise<void> => {
     if (!connectedWallet) {
       console.log("❌ Wallet is not connected. Connecting...");

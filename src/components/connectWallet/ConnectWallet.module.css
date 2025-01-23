@@ -551,6 +551,17 @@
 .inputGroup:hover .input::placeholder {
   animation: float 2.5s ease-in-out infinite;
 }
+.ambireSDKiframe {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.SDKProvider_wrapper__3UCAG {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 480px !important;
+  max-height: 600px !important;
+}
 
 /* Extra Large Desktop (1921px and above) */
 @media (min-width: 1921px) {

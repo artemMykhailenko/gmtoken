@@ -66,7 +66,7 @@ const Dashboard = () => {
       );
     }
   }, []);
-  // ✅ Функция загрузки баланса токена
+
   const loadTokenBalance = async () => {
     if (!walletAddress) {
       console.error("Wallet address not found");
