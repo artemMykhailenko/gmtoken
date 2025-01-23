@@ -10,9 +10,9 @@ export const CONTRACT_ABI = [
 // export const  API_URL = "https://ue63semz7f.execute-api.eu-central-1.amazonaws.com/default/GMRelayer";
 export const  API_URL = "https://ue63semz7f.execute-api.eu-central-1.amazonaws.com/testnet/GMRelayer"; //testnet
 // export const  API_URL = "https://ue63semz7f.execute-api.eu-central-1.amazonaws.com/mainnet/GMRelayer"; //mainnet
-//export const  TOKEN_URL="https://ue63semz7f.execute-api.eu-central-1.amazonaws.com/dev/TwitterAccessToken"
+export const  TOKEN_URL="https://ue63semz7f.execute-api.eu-central-1.amazonaws.com/dev/TwitterAccessToken"
 //export const  TOKEN_URL="https://ue63semz7f.execute-api.eu-central-1.amazonaws.com/mainnet/TwitterAccessToken" //mainet
-export const TOKEN_URL="https://ue63semz7f.execute-api.eu-central-1.amazonaws.com/testnet/TwitterAccessToken" //testnet
+// export const TOKEN_URL="https://ue63semz7f.execute-api.eu-central-1.amazonaws.com/testnet/TwitterAccessToken" //testnet
 
 export const CHAINS = [
   {
