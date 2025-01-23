@@ -384,7 +384,7 @@ const SendContract: React.FC<SendContractProps> = ({
               <img src="/sun.png" alt="Sun" className={styles.goodEmoji} />
               <a
                 className={styles.twittButton}
-                href="https://twitter.com/intent/tweet?text=Hello%20world"
+                href="https://twitter.com/intent/tweet?text=Now%20I%20can%20get%20%24GM%20from%20%40GM%20-%20awesome!%20%F0%9F%8C%80"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -398,11 +398,11 @@ const SendContract: React.FC<SendContractProps> = ({
                 >
                   <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z" />
                 </svg>
-                Tweet
+                Tweet GM
               </a>
               <a
                 className={styles.twittButton}
-                href="https://twitter.com/TwitterDev"
+                href="https://x.com/gmcoin_meme"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -416,7 +416,7 @@ const SendContract: React.FC<SendContractProps> = ({
                 >
                   <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13h-1v6l5.25 3.15.75-1.23-4.5-2.67V7z" />
                 </svg>
-                Follow @TwitterDev
+                Follow @TwitterGM
               </a>
 
               <button
