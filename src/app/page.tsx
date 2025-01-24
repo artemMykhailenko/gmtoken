@@ -17,6 +17,7 @@ import SendContract from "../components/SendContract/SendContract";
 import SunLoader from "../components/loader/loader";
 import { useWallet } from "../context/WalletContext";
 import ProgressNavigation from "../components/ProgressNavigation/ProgressNavigation";
+import { getErrorMessage } from "../hooks/errorHandler";
 
 export default function Home() {
   const [isAuthorized, setIsAuthorized] = useState(false);
@@ -219,19 +220,7 @@ export default function Home() {
       }
     } catch (error: any) {
       console.error("❌ Transaction Error:", error);
-
-      if (error?.code === 4001) {
-        setErrorMessage("Transaction cancelled by user.");
-      } else if (error?.message.includes("insufficient funds")) {
-        setErrorMessage("Insufficient balance to process transaction.");
-      } else if (error?.message.includes("Relayer service error")) {
-        setErrorMessage("Relayer service error. Try again later.");
-      } else if (error?.message.includes("timeout")) {
-        setErrorMessage("Transaction timed out. Please try again.");
-      } else {
-        setErrorMessage(`Transaction failed: ${error.message}`);
-      }
-
+      setErrorMessage(getErrorMessage(error));
       setTransactionStatus("error");
       throw error;
     }
@@ -299,6 +288,8 @@ export default function Home() {
               walletAddress={connectedWallet?.accounts[0]?.address || ""}
               sendTransaction={sendTransaction}
               connect={connect}
+              // transactionStatus={transactionStatus}
+              // setTransactionStatus={setTransactionStatus}
             />
           )}
         </div>

@@ -6,6 +6,7 @@ import Modal from "../modal/Modal";
 import { AlertCircle, RefreshCw } from "lucide-react";
 import { useWeb3 } from "@/src/hooks/useWeb3";
 import { useWalletActions } from "@/src/hooks/useWalletActions";
+import { getErrorMessage } from "@/src/hooks/errorHandler";
 interface SendContractProps {
   connectedWallet: { accounts: { address: string }[] } | null;
   sendTransaction: () => Promise<void>;
@@ -76,10 +77,8 @@ const SendContract: React.FC<SendContractProps> = ({
         }
       }
     };
-
     window.addEventListener("storage", updateWallet);
     updateWallet(); // Initial check
-
     return () => {
       window.removeEventListener("storage", updateWallet);
     };
@@ -135,23 +134,9 @@ const SendContract: React.FC<SendContractProps> = ({
     } catch (error: any) {
       console.error("Transaction error:", error);
 
-      if (error?.code === 4001 || error?.message?.includes("user denied")) {
-        setErrorMessage("Transaction cancelled by user.");
-        setModalState("error");
-        return;
-      }
+      const errorMessage = getErrorMessage(error);
 
-      if (
-        error?.message?.includes("insufficient funds") ||
-        error?.message?.includes("Relayer service error")
-      ) {
-        setErrorMessage("Insufficient balance to process transaction.");
-      } else if (error?.message?.includes("timeout")) {
-        setErrorMessage("Transaction timed out. Please try again.");
-      } else {
-        setErrorMessage("Transaction failed. Please try again.");
-      }
-
+      setErrorMessage(errorMessage);
       setModalState("error");
     }
   };

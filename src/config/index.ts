@@ -7,8 +7,8 @@ export const CONTRACT_ABI = [
   "function userByWallet(address wallet) public view returns (string memory)",
 ];
 
-// export const  API_URL = "https://ue63semz7f.execute-api.eu-central-1.amazonaws.com/default/GMRelayer";
-export const  API_URL = "https://ue63semz7f.execute-api.eu-central-1.amazonaws.com/testnet/GMRelayer"; //testnet
+export const  API_URL = "https://ue63semz7f.execute-api.eu-central-1.amazonaws.com/default/GMRelayer";
+// export const  API_URL = "https://ue63semz7f.execute-api.eu-central-1.amazonaws.com/testnet/GMRelayer"; //testnet
 // export const  API_URL = "https://ue63semz7f.execute-api.eu-central-1.amazonaws.com/mainnet/GMRelayer"; //mainnet
 export const  TOKEN_URL="https://ue63semz7f.execute-api.eu-central-1.amazonaws.com/dev/TwitterAccessToken"
 //export const  TOKEN_URL="https://ue63semz7f.execute-api.eu-central-1.amazonaws.com/mainnet/TwitterAccessToken" //mainet
