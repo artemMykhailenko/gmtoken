@@ -27,7 +27,7 @@ export const errorHandlers = [
   ];
   
   export const getErrorMessage = (error: any): string => {
-    // console.error("🚨 Full Error:", error); // Для отладки
+    // console.error("🚨 Full Error:", error); 
     const handler = errorHandlers.find((handler) => handler.condition(error));
     return handler ? handler.message : `Transaction failed: ${error?.message || "Unknown error"}`;
   };
