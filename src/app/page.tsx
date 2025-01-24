@@ -288,8 +288,6 @@ export default function Home() {
               walletAddress={connectedWallet?.accounts[0]?.address || ""}
               sendTransaction={sendTransaction}
               connect={connect}
-              // transactionStatus={transactionStatus}
-              // setTransactionStatus={setTransactionStatus}
             />
           )}
         </div>
